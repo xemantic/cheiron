@@ -1,0 +1,109 @@
+# cheiron — project journal
+
+A running, human-readable log of what the project decided, tried, learned, and
+where it got stuck. Newest entries at the top. Failures are recorded here on
+equal footing with successes — that is a design commitment of the project
+(see `README.md`).
+
+Machine-readable run records live in `experiments/*/results/` as JSONL; this
+file is the narrative that ties them together.
+
+---
+
+## 2026-07-17 — Iteration 0: bootstrapping the loop
+
+**Who:** Claude (Fable 5) as harness, on the mandate in
+`history/prompts/0001-initial-prompt.md`.
+
+**Goal for this iteration:** stand up a continuous-operation design loop and take
+it around the track once with a real physics result, however small.
+
+### What I decided
+
+- **Scope.** The Feynman Grand Prize as a whole is out of reach and not the aim.
+  We target *one sub-capability*: the ability to **design and computationally
+  validate individual positional-assembly reaction steps** — a tooltip that,
+  under positional control, performs a site-specific atomic operation that is
+  thermodynamically favorable, kinetically accessible, and positionally
+  selective. Rationale and boundaries in `docs/design/00-goal-and-scope.md`.
+
+- **The loop.** Six stages — PROPOSE → BUILD → ARBITER → SCORE → SELECT/EVOLVE,
+  with a human VETO gate — logging every candidate to an append-only ledger.
+  Full description in `docs/design/01-loop-architecture.md`.
+
+- **The arbiter.** Physics engines, tiered cheap→expensive so most candidates
+  die cheaply and only survivors pay for accuracy. Details in
+  `docs/design/02-arbiter.md`. For iteration 0 the arbiter is PySCF
+  (DFT/HF, unrestricted for radicals) with `geometric` for geometry
+  optimization.
+
+- **First milestone, M0.** Reproduce the canonical first mechanosynthesis step:
+  **hydrogen abstraction** by an ethynyl radical tooltip (`H–C≡C·`) pulling a
+  hydrogen off a hydrogenated carbon workpiece. This is a known, checkable
+  result (ethynyl's C–H bond is far stronger than a typical C–H, so abstraction
+  should be strongly exothermic). If the loop can't confirm a textbook reaction,
+  it isn't trustworthy on novel ones. Plan in `docs/design/03-milestones.md`.
+
+### What I built
+
+- Repository skeleton, Python package `cheiron`, docs, this journal, and the
+  prompt archive.
+- A working, isolated Python environment (no sudo on this host; bootstrapped
+  `pip` by hand into a venv). Stack: NumPy, SciPy, ASE, PySCF, geometric.
+- The loop stages as real, runnable code and an M0 experiment driver.
+
+### What the physics said
+
+The loop ran end-to-end, unattended, and **M0 succeeded** (project criterion
+S1). The ethynyl radical tool abstracting a hydrogen is favorable for every
+workpiece on the ladder, at `UKS/PBE/def2-SVP` (density-fitted, geometry
+optimized):
+
+| workpiece | C–H site | ΔE (kcal/mol) | expected¹ |
+|-----------|----------|--------------:|----------:|
+| methane   | primary   | **−26.2** | ~ −28 |
+| ethane    | primary   | **−31.7** | ~ −32 |
+| isobutane | tertiary  | **−39.9** | ~ −37 |
+
+¹ Rough expectation from bond dissociation energies: ΔE ≈ BDE(workpiece C–H) −
+BDE(acetylene C–H ≈ 133 kcal/mol), with workpiece BDEs ≈ 105 (methane), 101
+(ethane), 96 (isobutane tertiary).
+
+Two things make this convincing rather than lucky:
+
+1. **Sign and magnitude are right** across all three, without any fitting.
+2. **The ordering is physically correct** — the weaker the C–H bond being
+   broken, the more exothermic the abstraction (isobutane's tertiary C–H is the
+   weakest, so it's the most favorable). The loop recovered the C–H bond-strength
+   ladder on its own. That is exactly the internal consistency we need before
+   trusting the arbiter on novel steps.
+
+Caveats kept with the number (see `docs/design/02-arbiter.md`): PBE/def2-SVP is a
+screening-grade method; these are electronic energies without thermal/zero-point
+corrections; and this is *favorability only* — the barrier under mechanical
+approach (feasibility, M1) and site selectivity (M2) are not yet measured. A
+downhill reaction can still be kinetically blocked; M1 addresses that next.
+
+Raw records: `experiments/m0_hydrogen_abstraction/results/ledger.jsonl` (note it
+also retains the earlier fast 6-31G methane screen, −25.4 kcal/mol, superseded
+by the def2-SVP value — the append-only ledger keeps both).
+
+### What I learned / would change
+
+- The fragment-based reaction energy (four separately-optimized species) is a
+  clean, fast favorability signal and the right thing for M0. It deliberately
+  does **not** capture the positional/mechanical part of the step — that needs
+  the tool-plus-workpiece supersystem and an approach scan, which is M1.
+- `tblite`/GFN2-xTB would have made screening ~100× cheaper; its pip wheel is
+  broken on this host (no compiled extension, no sudo/conda). Logged as an
+  external help request. The small-basis DFT `--fast` preset is a serviceable
+  stand-in for now.
+
+### Requests to the human
+
+Nothing blocking yet. Longer-term asks are collected in
+`docs/design/03-milestones.md` under "External help wanted" (e.g. access to a
+higher-accuracy compute budget, and a domain expert willing to hold the VETO
+pen). None of these gate iteration 0.
+
+---

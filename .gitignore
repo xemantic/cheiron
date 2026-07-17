@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment (bootstrapped locally; see docs/design/02-arbiter.md)
+.venv/
+
+# PySCF / geometric scratch
+*.chk
+tmp*
+/tmp*
+
+# OS
+.DS_Store
+
+# Verbose arbiter run logs (reproducible; the ledger is the canonical record)
+experiments/**/results/*.log

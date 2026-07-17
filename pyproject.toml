@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cheiron"
+version = "0.0.1"
+description = "An autonomous design loop for positional molecular assembly"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "AGPL-3.0-or-later" }
+authors = [{ name = "Kazik Pogoda", email = "morisil@xemantic.com" }]
+dependencies = [
+    "numpy",
+    "scipy",
+    "ase",
+    "pyscf",
+    "geometric",
+]
+
+[project.optional-dependencies]
+# Semiempirical screening tier (GFN2-xTB). The pip wheel needs a working native
+# library; on hosts without it, install via conda. See docs/design/02-arbiter.md.
+screening = ["tblite"]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
