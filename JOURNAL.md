@@ -10,6 +10,38 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — Barrier matrix complete; the loop rediscovers Brønsted–Evans–Polanyi
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Methyl+isobutane relaxed scan (5 points, 834 s, ledger fragment reference —
+first scan on the consistent-reference path): well −0.95 @2.6 Å, **barrier
++2.6 @1.6 Å**, then H transfer and descent to −12.0 @1.2 Å. The 2×2
+tool×workpiece matrix (UKS/PBE/def2-SVP, relaxed scans, kcal/mol):
+
+| barrier (ΔE) | methane | isobutane |
+|---|---|---|
+| **ethynyl** | 0.0 (−26.2) | 0.0 (−39.9) |
+| **methyl** | 8.2 (0.0) | 2.6 (−13.6) |
+
+Two observations worth keeping:
+
+- **The feasibility axis is not redundant with favorability.** Methyl+isobutane
+  is decently downhill yet carries a real barrier; ethynyl is barrierless even
+  toward methane, its *least* favorable target. Ranking by ΔE alone would never
+  show this.
+- **Brønsted–Evans–Polanyi, rediscovered from scratch:** the methyl barriers
+  drop with exothermicity at slope ≈ 0.41 (8.2→2.6 over 13.6 kcal/mol) —
+  squarely in the classic α ≈ 0.4–0.5 range for H abstraction. Like the M0
+  additivity result, the loop's numbers keep reproducing known chemical
+  regularities it was never told about — the strongest available evidence
+  (short of an external referee) that the pipeline computes chemistry, not
+  noise.
+
+Caveats attached to the matrix: coarse distance grids mean each "barrier" is
+the profile max over ~0.3–0.4 Å spacing (true saddle may sit slightly higher);
+PBE biases barriers low; single collinear trajectory only.
+
 ## 2026-07-17 — Flagship confirmed: ethynyl+isobutane is barrierless under approach
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
