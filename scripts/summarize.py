@@ -15,12 +15,36 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from cheiron.ledger import Ledger  # noqa: E402
+from cheiron.score import FEASIBLE_BARRIER_KCAL  # noqa: E402
+
+
+def load_barriers(scans_path: Path) -> dict[str, float]:
+    """Latest usable relaxed-scan barrier per spec id (later records supersede,
+    so corrections appended to the scan file win automatically)."""
+    import json
+
+    barriers: dict[str, float] = {}
+    if not scans_path.exists():
+        return barriers
+    with scans_path.open(encoding="utf-8") as fh:
+        for line in fh:
+            if not line.strip():
+                continue
+            r = json.loads(line)
+            if (
+                r.get("kind") == "relaxed_approach_scan"
+                and r.get("ok")
+                and r.get("barrier_kcal") is not None
+            ):
+                barriers[r["spec_id"]] = r["barrier_kcal"]
+    return barriers
 
 
 def build_summary(ledger_path: Path) -> str:
     ledger = Ledger(ledger_path)
     latest = list(ledger.latest_by_spec().values())
     all_records = ledger.read_all()
+    barriers = load_barriers(ledger_path.parent / "scans.jsonl")
 
     usable = [r for r in latest
               if r.get("fitness") and r["fitness"].get("valid")
@@ -48,16 +72,27 @@ def build_summary(ledger_path: Path) -> str:
         "",
         "## Leaderboard (most favorable first)",
         "",
-        "| candidate | tool | workpiece | site | ΔE (kcal/mol) | favorable |",
-        "|-----------|------|-----------|------|--------------:|:---------:|",
+        "Barrier = relaxed approach scan (M1), profile max vs separated",
+        f"fragments; feasible gate at {FEASIBLE_BARRIER_KCAL:.0f} kcal/mol. "
+        "'—' = not yet scanned.",
+        "",
+        "| candidate | tool | workpiece | site | ΔE (kcal/mol) | favorable | barrier (kcal/mol) | feasible |",
+        "|-----------|------|-----------|------|--------------:|:---------:|-------------------:|:--------:|",
     ]
     for r in usable:
         spec, fit = r["spec"], r["fitness"]
+        barrier = barriers.get(spec["id"])
+        barrier_cell = "—" if barrier is None else f"{barrier:.1f}"
+        feasible_cell = (
+            "—" if barrier is None
+            else ("yes" if barrier <= FEASIBLE_BARRIER_KCAL else "no")
+        )
         lines.append(
             f"| {spec['id']} | {spec['tool']['id']} | {spec['workpiece']['id']} "
             f"| {spec['workpiece']['abstract_site']} "
             f"| {fit['reaction_energy_kcal']:+.1f} "
-            f"| {'yes' if fit['favorable'] else 'no'} |"
+            f"| {'yes' if fit['favorable'] else 'no'} "
+            f"| {barrier_cell} | {feasible_cell} |"
         )
 
     if failed:

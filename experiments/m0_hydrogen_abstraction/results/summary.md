@@ -10,17 +10,20 @@ append-only ledger (`ledger.jsonl`) is the source of truth._
 
 ## Leaderboard (most favorable first)
 
-| candidate | tool | workpiece | site | ΔE (kcal/mol) | favorable |
-|-----------|------|-----------|------|--------------:|:---------:|
-| habs-ethynyl-isobutane | ethynyl | isobutane | tertiary | -39.9 | yes |
-| habs-ethynyl-propane | ethynyl | propane | secondary | -36.1 | yes |
-| habs-ethynyl-butane | ethynyl | butane | secondary | -35.9 | yes |
-| habs-ethynyl-cyclobutane | ethynyl | cyclobutane | secondary | -35.1 | yes |
-| habs-ethynyl-ethane | ethynyl | ethane | primary | -31.7 | yes |
-| habs-ethynyl-methane | ethynyl | methane | any | -26.2 | yes |
-| habs-methyl-isobutane | methyl | isobutane | tertiary | -13.6 | yes |
-| habs-methyl-propane | methyl | propane | secondary | -9.9 | yes |
-| habs-methyl-butane | methyl | butane | secondary | -9.6 | yes |
-| habs-methyl-cyclobutane | methyl | cyclobutane | secondary | -8.8 | yes |
-| habs-methyl-ethane | methyl | ethane | primary | -5.4 | yes |
-| habs-methyl-methane | methyl | methane | any | +0.0 | no |
+Barrier = relaxed approach scan (M1), profile max vs separated
+fragments; feasible gate at 15 kcal/mol. '—' = not yet scanned.
+
+| candidate | tool | workpiece | site | ΔE (kcal/mol) | favorable | barrier (kcal/mol) | feasible |
+|-----------|------|-----------|------|--------------:|:---------:|-------------------:|:--------:|
+| habs-ethynyl-isobutane | ethynyl | isobutane | tertiary | -39.9 | yes | 0.0 | yes |
+| habs-ethynyl-propane | ethynyl | propane | secondary | -36.1 | yes | — | — |
+| habs-ethynyl-butane | ethynyl | butane | secondary | -35.9 | yes | — | — |
+| habs-ethynyl-cyclobutane | ethynyl | cyclobutane | secondary | -35.1 | yes | — | — |
+| habs-ethynyl-ethane | ethynyl | ethane | primary | -31.7 | yes | — | — |
+| habs-ethynyl-methane | ethynyl | methane | any | -26.2 | yes | 0.0 | yes |
+| habs-methyl-isobutane | methyl | isobutane | tertiary | -13.6 | yes | 2.6 | yes |
+| habs-methyl-propane | methyl | propane | secondary | -9.9 | yes | — | — |
+| habs-methyl-butane | methyl | butane | secondary | -9.6 | yes | — | — |
+| habs-methyl-cyclobutane | methyl | cyclobutane | secondary | -8.8 | yes | — | — |
+| habs-methyl-ethane | methyl | ethane | primary | -5.4 | yes | — | — |
+| habs-methyl-methane | methyl | methane | any | +0.0 | no | 8.2 | yes |
