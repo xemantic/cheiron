@@ -33,4 +33,8 @@ WORKPIECES: dict[str, WorkpieceSpec] = {
     # that better model a real surface than floppy chains do.
     "cyclobutane": WorkpieceSpec(id="cyclobutane", saturated_name="cyclobutane", abstract_site="secondary"),
     "isobutane": WorkpieceSpec(id="isobutane", saturated_name="isobutane", abstract_site="tertiary"),
+    # Adamantane: rigid diamondoid cage, the closest small-molecule model of a
+    # diamond C(111) surface site. Tertiary C-H is the abstraction target.
+    # Custom-built geometry (not in G2) — see chemistry.species.
+    "adamantane": WorkpieceSpec(id="adamantane", saturated_name="adamantane", abstract_site="tertiary"),
 }

@@ -161,3 +161,41 @@ def test_fragment_reference_rejects_unconverged(tmp_path):
     }
     path.write_text(json.dumps(record) + "\n")
     assert Ledger(path).fragment_reference("habs-t-w", "UKS/PBE/def2-SVP (df, opt)") is None
+
+
+def test_adamantane_geometry_is_sound():
+    """Adamantane is carved from the diamond lattice, so its correctness is
+    checkable: C10H16, all C-C bonds at the diamond length, 4 tertiary + 6
+    secondary carbons, no clashes."""
+    import numpy as np
+
+    from cheiron.chemistry.species import saturated
+    from cheiron.geometry import bond_graph, carbon_substitution, hydrogen_indices
+
+    atoms = saturated("adamantane")
+    symbols = atoms.get_chemical_symbols()
+    assert symbols.count("C") == 10 and symbols.count("H") == 16
+
+    graph = bond_graph(atoms)
+    positions = atoms.get_positions()
+    cc = [
+        float(np.linalg.norm(positions[i] - positions[j]))
+        for i in range(len(atoms)) for j in graph[i]
+        if i < j and symbols[i] == "C" and symbols[j] == "C"
+    ]
+    assert len(cc) == 12  # adamantane has 12 C-C bonds
+    assert all(abs(d - 1.5445) < 0.01 for d in cc)
+
+    tertiary_h = [h for h in hydrogen_indices(atoms)
+                  if carbon_substitution(atoms, h, graph) == 3]
+    secondary_h = [h for h in hydrogen_indices(atoms)
+                   if carbon_substitution(atoms, h, graph) == 2]
+    assert len(tertiary_h) == 4 and len(secondary_h) == 12
+    assert not has_clash(atoms)
+
+
+def test_adamantane_builds_into_reaction():
+    built = build(_spec("ethynyl", "adamantane"))
+    product = built.product_radical.atoms
+    assert product.get_chemical_symbols().count("H") == 15  # tertiary H removed
+    assert built.product_radical.spin == 1
