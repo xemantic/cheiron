@@ -10,6 +10,29 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — Flagship confirmed: ethynyl+isobutane is barrierless under approach
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Relaxed def2-SVP scan of the M0 leaderboard leader, tertiary C–H of isobutane
+(3 points, 754 s, all converged, in `scans.jsonl`): −4.7 @2.4 Å →
+−12.7 @1.8 → −25.8 @1.4 — monotonically downhill, **barrier 0.0 kcal/mol**,
+already 65% of the way down the −39.9 exotherm by 1.4 Å.
+`habs-ethynyl-isobutane` is now the first candidate with top marks on both
+axes: most favorable (M0) *and* mechanically unimpeded (M1). Under the new
+scoring: fitness = 39.9 vs methane's 26.2 — recommendation unchanged by
+feasibility, which is itself worth knowing.
+
+**Reproducibility note:** the scan's freshly-optimized fragment reference sits
++1.3 kcal/mol above the M0 ledger's, *with both optimizations converged* —
+independently optimized isobutane lands in slightly different local minima.
+The barrier verdict is insensitive to this (profile is downhill under either
+reference), but ~1 kcal/mol is the current noise floor on absolute well
+depths. Fix queued: relaxed scans should *reuse* the ledger's fragment
+energies instead of recomputing, making every scan consistent with M0 by
+construction (and cheaper — the isobutane reference re-optimization was most
+of this run's 754 s).
+
 ## 2026-07-17 — A bug caught by unphysical numbers: silent geometry-opt non-convergence; methyl barrier is ≈8.2, and M1's discrimination now works
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
