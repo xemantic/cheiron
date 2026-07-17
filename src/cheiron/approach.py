@@ -145,6 +145,7 @@ class ApproachScan:
     kind: str = "rigid_approach_scan"
     points: list[ScanPoint] = field(default_factory=list)
     reference_hartree: float | None = None  # E(Tool·) + E(H-W), same frozen geometries
+    reference_source: str | None = None  # 'recomputed' | 'ledger'
     ok: bool = False
     error: str | None = None
     wall_seconds: float = 0.0
@@ -174,6 +175,7 @@ class ApproachScan:
             "method": self.method,
             "kind": self.kind,
             "reference_hartree": self.reference_hartree,
+            "reference_source": self.reference_source,
             "barrier_kcal": self.barrier_kcal(),
             "ok": self.ok,
             "error": self.error,
@@ -291,14 +293,21 @@ def _constrained_optimize(
 
 
 def relaxed_scan(
-    spec: CandidateSpec, distances: list[float], config: ArbiterConfig
+    spec: CandidateSpec,
+    distances: list[float],
+    config: ArbiterConfig,
+    reference_hartree: float | None = None,
 ) -> ApproachScan:
     """Constrained relaxed scan: freeze d(tool_center···target_H), relax the rest.
 
     Unlike the rigid scan, the target hydrogen is free to transfer, so the
     profile's maximum is a genuine estimate of the barrier under approach
     (within the method and the chosen coordinate). The reference is the sum of
-    *separately optimized* fragment energies at the same method.
+    separately optimized fragment energies at the same method — pass
+    ``reference_hartree`` (e.g. from ``Ledger.fragment_reference``) to reuse
+    the ledger's converged fragments; independently re-optimized fragments can
+    land in different local minima ~1 kcal/mol apart, and recomputing them is
+    the most expensive part of a scan.
     """
     start = time.time()
     scan = ApproachScan(
@@ -307,27 +316,32 @@ def relaxed_scan(
         kind="relaxed_approach_scan",
     )
 
-    # Reference: independently optimized fragments (the M0 arbiter's species).
-    from .builder import build
+    if reference_hartree is not None:
+        scan.reference_hartree = reference_hartree
+        scan.reference_source = "ledger"
+    else:
+        # Reference: independently optimized fragments (the M0 arbiter's species).
+        from .builder import build
 
-    try:
-        built = build(spec)
-    except Exception as exc:
-        scan.error = f"fragment build failed: {exc}"
-        scan.wall_seconds = time.time() - start
-        return scan
-
-    from .arbiter import evaluate_species
-
-    refs = {}
-    for species in (built.tool_radical, built.workpiece):
-        result = evaluate_species(species, config)
-        if result.energy_hartree is None or not result.converged:
-            scan.error = f"fragment reference failed for {species.role}: {result.error or 'not converged'}"
+        try:
+            built = build(spec)
+        except Exception as exc:
+            scan.error = f"fragment build failed: {exc}"
             scan.wall_seconds = time.time() - start
             return scan
-        refs[species.role] = result.energy_hartree
-    scan.reference_hartree = refs["tool_radical"] + refs["workpiece"]
+
+        from .arbiter import evaluate_species
+
+        refs = {}
+        for species in (built.tool_radical, built.workpiece):
+            result = evaluate_species(species, config)
+            if result.energy_hartree is None or not result.converged:
+                scan.error = f"fragment reference failed for {species.role}: {result.error or 'not converged'}"
+                scan.wall_seconds = time.time() - start
+                return scan
+            refs[species.role] = result.energy_hartree
+        scan.reference_hartree = refs["tool_radical"] + refs["workpiece"]
+        scan.reference_source = "recomputed"
 
     for d in sorted(distances, reverse=True):  # far -> near
         point_start = time.time()

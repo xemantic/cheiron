@@ -61,3 +61,27 @@ class Ledger:
             if spec_id is not None:
                 latest[spec_id] = rec
         return latest
+
+    def fragment_reference(self, spec_id: str, method: str) -> float | None:
+        """E(tool_radical) + E(workpiece) from this spec's latest usable record.
+
+        Approach scans reference against separated fragments; reusing the
+        ledger's converged energies keeps every scan consistent with the M0
+        numbers by construction (independently re-optimized fragments can land
+        in different local minima ~1 kcal/mol apart). ``method`` must match the
+        record's method string — an energy is only reusable at the method that
+        produced it. Returns None if there is no matching converged record.
+        """
+        record = self.latest_by_spec().get(spec_id)
+        if not record or not record.get("measurement"):
+            return None
+        measurement = record["measurement"]
+        if measurement.get("method") != method:
+            return None
+        energies = {}
+        for s in measurement.get("species", []):
+            if s.get("converged") and s.get("energy_hartree") is not None:
+                energies[s["role"]] = s["energy_hartree"]
+        if "tool_radical" not in energies or "workpiece" not in energies:
+            return None
+        return energies["tool_radical"] + energies["workpiece"]

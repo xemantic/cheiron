@@ -108,3 +108,56 @@ def test_barrier_outweighs_exothermicity_in_fitness():
     barrierless = score(_favorable_measurement("a", -26.2), barrier_kcal=0.0)
     blocked = score(_favorable_measurement("b", -30.0), barrier_kcal=8.2)
     assert barrierless.fitness > blocked.fitness
+
+
+def test_fragment_reference_reuses_ledger_energies(tmp_path):
+    import json
+
+    from cheiron.ledger import Ledger
+
+    path = tmp_path / "ledger.jsonl"
+    record = {
+        "spec": {"id": "habs-t-w"},
+        "build": {"ok": True},
+        "measurement": {
+            "method": "UKS/PBE/def2-SVP (df, opt)",
+            "species": [
+                {"role": "tool_radical", "energy_hartree": -39.74, "converged": True},
+                {"role": "workpiece", "energy_hartree": -40.42, "converged": True},
+                {"role": "tool_saturated", "energy_hartree": -40.41, "converged": True},
+                {"role": "product_radical", "energy_hartree": -39.73, "converged": True},
+            ],
+        },
+        "fitness": None,
+        "status": "evaluated",
+    }
+    path.write_text(json.dumps(record) + "\n")
+    ledger = Ledger(path)
+
+    assert ledger.fragment_reference("habs-t-w", "UKS/PBE/def2-SVP (df, opt)") == -39.74 + -40.42
+    # method mismatch: an energy is only reusable at the method that produced it
+    assert ledger.fragment_reference("habs-t-w", "UKS/B3LYP/def2-SVP (df, opt)") is None
+    assert ledger.fragment_reference("nonexistent", "UKS/PBE/def2-SVP (df, opt)") is None
+
+
+def test_fragment_reference_rejects_unconverged(tmp_path):
+    import json
+
+    from cheiron.ledger import Ledger
+
+    path = tmp_path / "ledger.jsonl"
+    record = {
+        "spec": {"id": "habs-t-w"},
+        "build": {"ok": True},
+        "measurement": {
+            "method": "UKS/PBE/def2-SVP (df, opt)",
+            "species": [
+                {"role": "tool_radical", "energy_hartree": -39.72, "converged": False},
+                {"role": "workpiece", "energy_hartree": -40.42, "converged": True},
+            ],
+        },
+        "fitness": None,
+        "status": "evaluated",
+    }
+    path.write_text(json.dumps(record) + "\n")
+    assert Ledger(path).fragment_reference("habs-t-w", "UKS/PBE/def2-SVP (df, opt)") is None

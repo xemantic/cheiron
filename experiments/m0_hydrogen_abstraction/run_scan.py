@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from cheiron.approach import relaxed_scan, rigid_scan  # noqa: E402
 from cheiron.arbiter import ArbiterConfig  # noqa: E402
 from cheiron.chemistry.library import TOOLS, WORKPIECES  # noqa: E402
+from cheiron.ledger import Ledger  # noqa: E402
 from cheiron.spec import CandidateSpec  # noqa: E402
 
 DEFAULT_DISTANCES = [4.0, 3.5, 3.0, 2.6, 2.2, 1.9, 1.6, 1.4, 1.2]
@@ -59,8 +60,18 @@ def main() -> int:
     print(f"method: {config.method_string()}")
     print(f"distances (A): {sorted(args.distances, reverse=True)}")
 
-    runner = relaxed_scan if args.relaxed else rigid_scan
-    scan = runner(spec, list(args.distances), config)
+    if args.relaxed:
+        # Reuse the M0 ledger's converged fragment energies (opt method) so the
+        # scan reference is consistent with the ledger by construction.
+        opt_method = ArbiterConfig(
+            functional=args.functional, basis=args.basis
+        ).method_string()
+        ledger = Ledger(Path(__file__).parent / "results" / "ledger.jsonl")
+        reference = ledger.fragment_reference(spec.id, opt_method)
+        print(f"fragment reference: {'ledger (' + opt_method + ')' if reference is not None else 'recomputing'}")
+        scan = relaxed_scan(spec, list(args.distances), config, reference_hartree=reference)
+    else:
+        scan = rigid_scan(spec, list(args.distances), config)
 
     record = scan.to_dict()
     record["created_unix"] = int(time.time())
