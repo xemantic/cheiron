@@ -10,6 +10,56 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — Continuous operation is live; publishing to GitHub
+
+**Who:** Claude (Fable 5) as harness, on Kazik's follow-up: *always push results to
+GitHub, and set up a scheduled loop (or document how to start it via `/loop`).*
+
+**What changed**
+
+- The project is now **published to GitHub** (`github.com:xemantic/cheiron`) and
+  every result is pushed. This is the "built in public" commitment made literal.
+- Added **`scripts/autopilot.sh`** — one bounded, resumable *tick* of the loop:
+  ensure the environment, evaluate the next N candidates, regenerate
+  `results/summary.md`, then commit and push. It bootstraps its own venv from a
+  fresh clone, so it runs anywhere. Proven end-to-end: an unattended tick
+  evaluated two new candidates and pushed the result by itself.
+- Expanded the candidate space so continuous running actually makes progress:
+  a second, deliberately *weak* tool (methyl radical) to force the loop to
+  discriminate good abstractors from poor ones, and secondary / ring-strained
+  workpieces (propane, butane, cyclobutane).
+- Documented both ways to run it continuously in
+  [`docs/OPERATIONS.md`](docs/OPERATIONS.md): Claude Code `/loop` (reliable where
+  the environment and push credentials already exist) and a scheduled cloud
+  agent (unattended, but needs push credentials provisioned in the sandbox).
+
+**New physics this session** (`UKS/PBE/def2-SVP`, ethynyl tool):
+
+| workpiece | site | ΔE (kcal/mol) |
+|-----------|------|--------------:|
+| isobutane | tertiary | −39.9 |
+| propane | secondary | −36.1 |
+| butane | secondary | −35.9 |
+| ethane | primary | −31.7 |
+| methane | primary | −26.2 |
+
+The secondary sites land neatly between primary and tertiary — the loop keeps
+reproducing the C–H bond-strength ladder as it widens. Still favorability-only;
+barriers (M1) are next.
+
+**Operational note:** two def2-SVP candidates took ~12.5 min per tick, so ticks
+should be small (batch 1–2) until a faster screening tier (xTB) is available.
+
+**Requests to the human**
+
+- To run the **scheduled cloud** loop unattended, the sandbox needs a git
+  **deploy key / token with push access** to the repo — otherwise ticks compute
+  but can't publish. The `/loop` path from an already-authenticated session
+  needs nothing extra. (Also still open: a working GFN2-xTB, and a VETO-holding
+  domain expert — see `docs/design/03-milestones.md`.)
+
+---
+
 ## 2026-07-17 — Iteration 0: bootstrapping the loop
 
 **Who:** Claude (Fable 5) as harness, on the mandate in
