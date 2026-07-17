@@ -10,6 +10,41 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — M0 grid complete (12/12); ΔE is additive across tool and workpiece to 0.1 kcal/mol
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The 2-tool × 6-workpiece grid is fully evaluated (UKS/PBE/def2-SVP, df, opt;
+12 distinct candidates, 11 favorable, 1 unfavorable, 0 failures). The striking
+result is how cleanly ΔE decomposes into a tool term plus a workpiece term.
+Taking methane as the reference site, the workpiece offsets measured with each
+tool independently:
+
+| workpiece | offset via ethynyl | offset via methyl |
+|-----------|-------------------:|------------------:|
+| ethane | −5.5 | −5.4 |
+| cyclobutane | −8.9 | −8.8 |
+| butane | −9.7 | −9.6 |
+| propane | −9.9 | −9.9 |
+| isobutane | −13.7 | −13.6 |
+
+Every offset agrees across tools to ≤0.1 kcal/mol — bond-energy additivity
+reproduced from scratch by the loop's own numbers. Practical consequence for
+M3-era screening: measuring a new *tool* against one reference workpiece (plus
+this table) predicts its whole ladder, so tool-space search can spend ~1 QM
+calc per tool instead of 6.
+
+Honest miss: the previous entry predicted the methyl secondaries/tertiary at
+ΔE ≈ −2…−7 kcal/mol; actuals ran −8.8…−13.6. Direction right, magnitude
+underestimated — the CH4 C–H (BDE ~105) vs secondary/tertiary (~96–99) gap is
+larger than the guess assumed.
+
+**Grid exhausted → the frontier is now M1**: add a mechanical
+approach-coordinate scan to the arbiter so survivors report a barrier under
+approach, not just a reaction energy. Next iterations build it in small,
+test-backed pieces (constrained-distance scan → barrier extraction → SCORE
+feasibility axis).
+
 ## 2026-07-17 — First unfavorable result: the thermoneutral control comes back exactly 0
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
