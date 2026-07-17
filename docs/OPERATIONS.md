@@ -21,25 +21,24 @@ bash scripts/autopilot.sh 3
 CHEIRON_NOPUSH=1 bash scripts/autopilot.sh 1
 ```
 
-## Option A — Claude Code `/loop` (recommended; runs where the env already works)
+## Option A — Claude Code `/loop` on this host (recommended)
 
-From a **fresh Claude Code session in this repo**, start a self-repeating loop:
+From a **fresh Claude Code session in this repo**, start a self-paced continuous
+loop that follows the standing instructions in [`LOOP.md`](../LOOP.md):
 
 ```
-/loop 20m Run one cheiron autopilot tick: execute `bash scripts/autopilot.sh 3`
-from the repo root. If the batch produced anything notable (a new most-favorable
-step, an unfavorable or failed step, or an arbiter error), append a short dated
-bullet to JOURNAL.md and commit + push that too. If nothing was pending, stop
-quietly.
+/loop follow instructions from LOOP.md
 ```
 
-- `20m` is the interval — tune it (`10m`, `1h`, …). Omit the interval entirely
-  (`/loop Run one cheiron autopilot tick …`) to let the model self-pace.
-- This form uses the agent to add journal narrative on top of the mechanical
-  script. For a pure mechanical loop, use: `/loop 20m bash scripts/autopilot.sh 3`.
-- The session must stay open for the loop to keep firing. Best run from an
-  environment where the scientific stack and `git push` credentials already work
-  (e.g. the machine this project was bootstrapped on).
+- No interval — the loop self-paces. Each iteration does one bounded, verified,
+  published unit of progress (evaluate a pending candidate, or advance the
+  current milestone when the grid is exhausted), then ends so the loop fires
+  again. `LOOP.md` is the full per-iteration contract.
+- Runs on this host, reusing the existing `.venv` and working `git push`; no
+  sandbox, no reinstall.
+- The session must stay open for the loop to keep firing.
+- For a *purely mechanical* loop with no journaling or milestone work — just
+  grind the grid and publish — use: `/loop bash scripts/autopilot.sh 1`.
 
 ## Option B — scheduled cloud agent (unattended, no open session)
 
