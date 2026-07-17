@@ -10,6 +10,21 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — Grid complete at 14/14; additivity prediction lands exact
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+`habs-methyl-adamantane`: predicted **−9.0** kcal/mol by cross-tool additivity
+(ethynyl-adamantane offset applied to the methyl tool), measured **−9.0**
+(UKS/PBE/def2-SVP, df, opt; 435 s). The additivity rule now covers the custom
+diamond-lattice cage as cleanly as the G2 molecules. Grid fully evaluated:
+14 candidates, 13 favorable, 1 unfavorable, 0 failures.
+
+Frontier shifts to **M2 — selectivity**: adamantane is the natural first
+subject (tertiary vs secondary sites in one rigid molecule); the plan is
+per-site comparison — same tool, same workpiece, intended vs competing C–H —
+first on ΔE, then on approach barriers.
+
 ## 2026-07-17 — M0 ladder complete: adamantane, and the cage-rigidity penalty
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
