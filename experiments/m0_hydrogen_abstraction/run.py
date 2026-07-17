@@ -49,6 +49,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="small-basis screening preset (STO-3G-ish, fast, rough)")
     parser.add_argument("--force", action="store_true",
                         help="re-evaluate candidates already in the ledger")
+    parser.add_argument("--limit", type=int, default=None,
+                        help="evaluate at most N not-yet-done candidates (bounded tick)")
     parser.add_argument("--ledger", default=str(RESULTS / "ledger.jsonl"))
     args = parser.parse_args(argv)
 
@@ -65,6 +67,15 @@ def main(argv: list[str] | None = None) -> int:
 
     ledger = Ledger(args.ledger)
     candidates = list(enumerate_candidates(tools=args.tools, workpieces=args.workpieces))
+
+    # Bounded tick: keep only not-yet-evaluated candidates, then cap at --limit.
+    if args.limit is not None and not args.force:
+        done = set(ledger.latest_by_spec())
+        pending = [c for c in candidates if c.id not in done]
+        candidates = pending[: args.limit]
+        if not candidates:
+            print("cheiron M0 — nothing pending; all candidates already evaluated.")
+            return 0
 
     print(f"cheiron M0 — {len(candidates)} candidate(s)")
     print(f"arbiter: {config.method_string()} (tier {config.tier})")
