@@ -35,11 +35,15 @@ under mechanical approach**, not only a reaction energy. Distinguish steps that
 are downhill-but-blocked from steps that actually proceed under positional load.
 
 Status: `cheiron.approach` builds the collinear `C–H···Tool·` supersystem at a
-controlled approach distance and runs a **rigid scan** (frozen fragments,
-single-point energies, referenced to the separated fragments) with a
-`barrier_kcal()` extraction. Geometry logic is test-covered; the first real
-def2-SVP scan on a known-favorable pair is next, then a constrained *relaxed*
-scan, then wiring the barrier into SCORE as the feasibility axis.
+controlled approach distance and runs both a **rigid scan** and a constrained
+**relaxed scan** (geomeTRIC `$freeze` on the approach distance, optimized
+geometries recorded per point, references audited against the M0 ledger).
+Production def2-SVP results: ethynyl+methane barrier **0.0** kcal/mol,
+methyl+methane **≈8.2** — the feasibility discrimination works. `score()` now
+takes the barrier: feasible gate at 15 kcal/mol, fitness = −ΔE − 2·barrier
+(declared heuristic). Remaining for M1: scan the tool/workpiece shortlist
+(ethynyl+isobutane first), surface barriers in the published summary, and a
+hybrid-functional cross-check of the PBE barriers.
 
 ## M2 — Selectivity and tool integrity
 

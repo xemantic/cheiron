@@ -17,6 +17,18 @@ from dataclasses import asdict, dataclass
 
 from .arbiter import ReactionMeasurement
 
+# Feasibility gate: a step whose barrier under approach exceeds this is treated
+# as blocked. ~15 kcal/mol still gives ~10^2/s at room temperature by TST, and
+# positional load can only lower a real barrier below the scan's estimate.
+# PBE biases barriers low, so this gate is generous in the other direction —
+# both caveats travel with the number in the note.
+FEASIBLE_BARRIER_KCAL = 15.0
+
+# Explicit heuristic weight: one kcal/mol of barrier costs two of exothermicity
+# in the scalar fitness. Kinetics beat thermodynamics exponentially, so the
+# barrier must dominate a linear score; 2:1 is a declared choice, not physics.
+BARRIER_WEIGHT = 2.0
+
 
 @dataclass
 class FitnessRecord:
@@ -38,8 +50,15 @@ class FitnessRecord:
         return asdict(self)
 
 
-def score(measurement: ReactionMeasurement) -> FitnessRecord:
-    """Turn a reaction measurement into a fitness record."""
+def score(
+    measurement: ReactionMeasurement, barrier_kcal: float | None = None
+) -> FitnessRecord:
+    """Turn a reaction measurement (plus optional approach barrier) into fitness.
+
+    ``barrier_kcal`` is the M1 relaxed-scan barrier under approach
+    (``ApproachScan.barrier_kcal()``); pass None when no scan has been run —
+    the record then scores on favorability alone, exactly as in M0.
+    """
     if not measurement.ok or measurement.reaction_energy_kcal is None:
         return FitnessRecord(
             spec_id=measurement.spec_id,
@@ -53,15 +72,29 @@ def score(measurement: ReactionMeasurement) -> FitnessRecord:
     delta = measurement.reaction_energy_kcal
     favorable = delta < 0.0
 
-    # M0 fitness: exothermicity. More negative ΔE -> higher fitness. Feasibility
-    # and selectivity terms fold in here as those measurements come online.
-    fitness = -delta
+    if barrier_kcal is None:
+        return FitnessRecord(
+            spec_id=measurement.spec_id,
+            reaction_energy_kcal=delta,
+            favorable=favorable,
+            fitness=-delta,
+            valid=True,
+            note="M0: favorability only (feasibility/selectivity not yet measured)",
+        )
 
+    feasible = barrier_kcal <= FEASIBLE_BARRIER_KCAL
+    fitness = -delta - BARRIER_WEIGHT * barrier_kcal
     return FitnessRecord(
         spec_id=measurement.spec_id,
         reaction_energy_kcal=delta,
         favorable=favorable,
+        barrier_kcal=barrier_kcal,
+        feasible=feasible,
         fitness=fitness,
         valid=True,
-        note="M0: favorability only (feasibility/selectivity not yet measured)",
+        note=(
+            f"M1: fitness = -dE - {BARRIER_WEIGHT}*barrier; feasible gate at "
+            f"{FEASIBLE_BARRIER_KCAL} kcal/mol (PBE biases barriers low; "
+            "mechanical load lowers real barriers)"
+        ),
     )

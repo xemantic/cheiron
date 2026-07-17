@@ -76,3 +76,35 @@ def test_score_marks_unconverged_as_unusable():
 def test_method_string_is_self_describing():
     cfg = ArbiterConfig(functional="PBE", basis="def2-SVP")
     assert "PBE" in cfg.method_string() and "def2-SVP" in cfg.method_string()
+
+
+def _favorable_measurement(spec_id: str, delta_kcal: float) -> ReactionMeasurement:
+    m = ReactionMeasurement(spec_id=spec_id, method="test", tier=2)
+    m.species = [SpeciesResult(r, -1.0, True, 0, 0, 0.0)
+                 for r in ("tool_saturated", "tool_radical", "workpiece", "product_radical")]
+    m.reaction_energy_hartree = delta_kcal / 627.509474
+    m.reaction_energy_kcal = delta_kcal
+    m.ok = True
+    return m
+
+
+def test_score_with_barrier_sets_feasibility():
+    fit = score(_favorable_measurement("x", -26.2), barrier_kcal=0.0)
+    assert fit.feasible is True and fit.barrier_kcal == 0.0
+
+    blocked = score(_favorable_measurement("y", -26.2), barrier_kcal=40.0)
+    assert blocked.feasible is False
+    assert blocked.valid  # blocked is a verdict, not a broken measurement
+
+
+def test_score_without_barrier_leaves_feasibility_open():
+    fit = score(_favorable_measurement("x", -26.2))
+    assert fit.feasible is None and fit.barrier_kcal is None
+
+
+def test_barrier_outweighs_exothermicity_in_fitness():
+    """A slightly less exothermic but barrierless step must outrank a more
+    exothermic step with a real barrier — kinetics beat thermodynamics."""
+    barrierless = score(_favorable_measurement("a", -26.2), barrier_kcal=0.0)
+    blocked = score(_favorable_measurement("b", -30.0), barrier_kcal=8.2)
+    assert barrierless.fitness > blocked.fitness
