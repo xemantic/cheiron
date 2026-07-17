@@ -20,7 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from cheiron.approach import rigid_scan  # noqa: E402
+from cheiron.approach import relaxed_scan, rigid_scan  # noqa: E402
 from cheiron.arbiter import ArbiterConfig  # noqa: E402
 from cheiron.chemistry.library import TOOLS, WORKPIECES  # noqa: E402
 from cheiron.spec import CandidateSpec  # noqa: E402
@@ -36,6 +36,11 @@ def main() -> int:
     parser.add_argument("--functional", default="PBE")
     parser.add_argument("--basis", default="def2-SVP")
     parser.add_argument(
+        "--relaxed",
+        action="store_true",
+        help="constrained relaxed scan (H can transfer) instead of rigid",
+    )
+    parser.add_argument(
         "--out", type=Path, default=Path(__file__).parent / "results" / "scans.jsonl"
     )
     args = parser.parse_args()
@@ -49,11 +54,13 @@ def main() -> int:
         functional=args.functional, basis=args.basis, optimize_geometry=False
     )
 
-    print(f"cheiron M1 — rigid scan  {spec.id}")
-    print(f"method: {config.method_string()}  (frozen fragments, single points)")
+    mode = "relaxed" if args.relaxed else "rigid"
+    print(f"cheiron M1 — {mode} scan  {spec.id}")
+    print(f"method: {config.method_string()}")
     print(f"distances (A): {sorted(args.distances, reverse=True)}")
 
-    scan = rigid_scan(spec, list(args.distances), config)
+    runner = relaxed_scan if args.relaxed else rigid_scan
+    scan = runner(spec, list(args.distances), config)
 
     record = scan.to_dict()
     record["created_unix"] = int(time.time())

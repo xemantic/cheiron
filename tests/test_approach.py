@@ -5,7 +5,13 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from cheiron.approach import ApproachBuildError, ApproachScan, ScanPoint, build_supersystem
+from cheiron.approach import (
+    ApproachBuildError,
+    ApproachScan,
+    ScanPoint,
+    build_supersystem,
+    constraint_file_text,
+)
 from cheiron.chemistry.library import TOOLS, WORKPIECES
 from cheiron.geometry import has_clash
 from cheiron.spec import CandidateSpec
@@ -89,3 +95,10 @@ def test_barrier_is_zero_for_all_downhill_profile():
 def test_barrier_none_without_usable_points():
     scan = ApproachScan(spec_id="x", method="m")
     assert scan.barrier_kcal() is None
+
+
+def test_constraint_file_uses_one_based_indices():
+    """geomeTRIC constraint files are 1-based; cheiron indices are 0-based.
+    Off-by-one here would silently freeze the wrong atom pair."""
+    text = constraint_file_text(3, 6)
+    assert text.splitlines() == ["$freeze", "distance 4 7"]

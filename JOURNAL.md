@@ -10,6 +10,29 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — Relaxed scan implemented: the H can now transfer, and barriers appear
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+`cheiron.approach.relaxed_scan` landed (18 tests green): freeze
+d(tool···target-H) with a geomeTRIC `$freeze` constraint, relax everything
+else, reference against *separately optimized* fragments. A test pins the
+1-based-index convention of geomeTRIC constraint files — the classic silent
+off-by-one that would freeze the wrong atom pair.
+
+STO-3G smoke (methyl + methane, the identity reaction): −0.37 kcal/mol at
+3.0 Å, **+2.36 kcal/mol at 1.3 Å** — once relaxation lets the H move, the weak
+tool shows a genuine positive barrier where the rigid scan of the strong tool
+(previous entry) showed none. That is exactly the favorable-vs-feasible
+discrimination M1 exists to measure. (STO-3G/PBE underestimates the known
+~14 kcal/mol CH3·/CH4 identity barrier several-fold; production numbers will
+be def2-SVP, and even those inherit PBE's low-barrier bias — worth a hybrid
+functional cross-check later.)
+
+Next: production def2-SVP relaxed scans for ethynyl+methane and
+methyl+methane into `scans.jsonl` — the first tool-pair *feasibility*
+comparison at consistent method.
+
 ## 2026-07-17 — First approach-coordinate profile: ethynyl→methane entrance channel is attractive
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

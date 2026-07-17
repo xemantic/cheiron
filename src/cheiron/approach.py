@@ -141,6 +141,7 @@ class ApproachScan:
 
     spec_id: str
     method: str
+    kind: str = "rigid_approach_scan"
     points: list[ScanPoint] = field(default_factory=list)
     reference_hartree: float | None = None  # E(Tool·) + E(H-W), same frozen geometries
     ok: bool = False
@@ -170,7 +171,7 @@ class ApproachScan:
         return {
             "spec_id": self.spec_id,
             "method": self.method,
-            "kind": "rigid_approach_scan",
+            "kind": self.kind,
             "reference_hartree": self.reference_hartree,
             "barrier_kcal": self.barrier_kcal(),
             "ok": self.ok,
@@ -213,6 +214,126 @@ def _single_point(atoms: Atoms, spin: int, config: ArbiterConfig) -> tuple[float
         return energy, bool(mf.converged), None
     except Exception as exc:
         return None, False, f"{type(exc).__name__}: {exc}"
+
+
+def constraint_file_text(atom_i: int, atom_j: int) -> str:
+    """geomeTRIC ``$freeze`` block pinning one interatomic distance.
+
+    geomeTRIC constraint files use **1-based** atom indices; the caller passes
+    the 0-based indices used everywhere else in cheiron.
+    """
+    return f"$freeze\ndistance {atom_i + 1} {atom_j + 1}\n"
+
+
+def _constrained_optimize(
+    atoms: Atoms, spin: int, frozen_pair: tuple[int, int], config: ArbiterConfig
+) -> tuple[float | None, bool, str | None]:
+    """Optimize with one distance frozen; return (energy, converged, error)."""
+    import os
+    import tempfile
+
+    from pyscf import dft, gto
+    from pyscf.geomopt.geometric_solver import optimize
+
+    try:
+        mol = gto.M(
+            atom=[
+                [sym, tuple(float(x) for x in pos)]
+                for sym, pos in zip(atoms.get_chemical_symbols(), atoms.get_positions())
+            ],
+            basis=config.basis,
+            spin=spin,
+            charge=0,
+            verbose=0,
+        )
+
+        def make_mf(m):
+            mf = dft.UKS(m)
+            mf.xc = config.functional
+            mf.conv_tol = config.scf_conv_tol
+            if config.use_density_fitting:
+                mf = mf.density_fit()
+            return mf
+
+        fd, cpath = tempfile.mkstemp(suffix=".txt", text=True)
+        try:
+            with os.fdopen(fd, "w") as f:
+                f.write(constraint_file_text(*frozen_pair))
+            mol_eq = optimize(
+                make_mf(mol), constraints=cpath, maxsteps=config.max_opt_steps
+            )
+        finally:
+            os.unlink(cpath)
+
+        mf = make_mf(mol_eq)
+        energy = float(mf.kernel())
+        return energy, bool(mf.converged), None
+    except Exception as exc:
+        return None, False, f"{type(exc).__name__}: {exc}"
+
+
+def relaxed_scan(
+    spec: CandidateSpec, distances: list[float], config: ArbiterConfig
+) -> ApproachScan:
+    """Constrained relaxed scan: freeze d(tool_center···target_H), relax the rest.
+
+    Unlike the rigid scan, the target hydrogen is free to transfer, so the
+    profile's maximum is a genuine estimate of the barrier under approach
+    (within the method and the chosen coordinate). The reference is the sum of
+    *separately optimized* fragment energies at the same method.
+    """
+    start = time.time()
+    scan = ApproachScan(
+        spec_id=spec.id,
+        method=config.method_string() + " [relaxed scan]",
+        kind="relaxed_approach_scan",
+    )
+
+    # Reference: independently optimized fragments (the M0 arbiter's species).
+    from .builder import build
+
+    try:
+        built = build(spec)
+    except Exception as exc:
+        scan.error = f"fragment build failed: {exc}"
+        scan.wall_seconds = time.time() - start
+        return scan
+
+    from .arbiter import evaluate_species
+
+    refs = {}
+    for species in (built.tool_radical, built.workpiece):
+        result = evaluate_species(species, config)
+        if result.energy_hartree is None or not result.converged:
+            scan.error = f"fragment reference failed for {species.role}: {result.error or 'not converged'}"
+            scan.wall_seconds = time.time() - start
+            return scan
+        refs[species.role] = result.energy_hartree
+    scan.reference_hartree = refs["tool_radical"] + refs["workpiece"]
+
+    for d in sorted(distances, reverse=True):  # far -> near
+        point_start = time.time()
+        try:
+            system = build_supersystem(spec, d)
+        except ApproachBuildError as exc:
+            scan.points.append(
+                ScanPoint(d, None, False, False, time.time() - point_start, str(exc))
+            )
+            continue
+        clash = has_clash(system.atoms)
+        energy, converged, error = _constrained_optimize(
+            system.atoms, system.spin, (system.target_h, system.tool_center), config
+        )
+        scan.points.append(
+            ScanPoint(d, energy, converged, clash, time.time() - point_start, error)
+        )
+
+    usable = [p for p in scan.points if p.energy_hartree is not None and p.converged]
+    scan.ok = bool(usable)
+    if not scan.ok and scan.error is None:
+        scan.error = "no scan point produced a converged energy"
+    scan.wall_seconds = time.time() - start
+    return scan
 
 
 def rigid_scan(
