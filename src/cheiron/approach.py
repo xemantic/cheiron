@@ -133,6 +133,7 @@ class ScanPoint:
     clash: bool
     wall_seconds: float
     error: str | None = None
+    final_xyz: str | None = None  # optimized geometry (relaxed scans), xyz-format body
 
 
 @dataclass
@@ -185,6 +186,7 @@ class ApproachScan:
                     "clash": p.clash,
                     "wall_seconds": round(p.wall_seconds, 2),
                     "error": p.error,
+                    "final_xyz": p.final_xyz,
                 }
                 for p in self.points
             ],
@@ -227,8 +229,14 @@ def constraint_file_text(atom_i: int, atom_j: int) -> str:
 
 def _constrained_optimize(
     atoms: Atoms, spin: int, frozen_pair: tuple[int, int], config: ArbiterConfig
-) -> tuple[float | None, bool, str | None]:
-    """Optimize with one distance frozen; return (energy, converged, error)."""
+) -> tuple[float | None, bool, str | None, str | None]:
+    """Optimize with one distance frozen.
+
+    Returns (energy, converged, error, final_xyz) — the optimized geometry is
+    kept because a constrained optimizer is free to do chemistry we did not ask
+    for (transfer a different hydrogen, reorient into a bridged complex), and
+    an energy without its geometry cannot be audited.
+    """
     import os
     import tempfile
 
@@ -260,16 +268,26 @@ def _constrained_optimize(
             with os.fdopen(fd, "w") as f:
                 f.write(constraint_file_text(*frozen_pair))
             mol_eq = optimize(
-                make_mf(mol), constraints=cpath, maxsteps=config.max_opt_steps
+                make_mf(mol),
+                constraints=cpath,
+                maxsteps=config.max_opt_steps,
+                assert_convergence=True,
             )
         finally:
             os.unlink(cpath)
 
         mf = make_mf(mol_eq)
         energy = float(mf.kernel())
-        return energy, bool(mf.converged), None
+        from pyscf.data.nist import BOHR
+
+        coords = mol_eq.atom_coords() * BOHR  # Bohr -> Angstrom
+        xyz = "\n".join(
+            f"{mol_eq.atom_symbol(i)} {c[0]:.6f} {c[1]:.6f} {c[2]:.6f}"
+            for i, c in enumerate(coords)
+        )
+        return energy, bool(mf.converged), None, xyz
     except Exception as exc:
-        return None, False, f"{type(exc).__name__}: {exc}"
+        return None, False, f"{type(exc).__name__}: {exc}", None
 
 
 def relaxed_scan(
@@ -321,11 +339,11 @@ def relaxed_scan(
             )
             continue
         clash = has_clash(system.atoms)
-        energy, converged, error = _constrained_optimize(
+        energy, converged, error, xyz = _constrained_optimize(
             system.atoms, system.spin, (system.target_h, system.tool_center), config
         )
         scan.points.append(
-            ScanPoint(d, energy, converged, clash, time.time() - point_start, error)
+            ScanPoint(d, energy, converged, clash, time.time() - point_start, error, xyz)
         )
 
     usable = [p for p in scan.points if p.energy_hartree is not None and p.converged]

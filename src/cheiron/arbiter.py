@@ -120,7 +120,12 @@ def evaluate_species(species: Species, config: ArbiterConfig) -> SpeciesResult:
         if config.optimize_geometry and len(species.atoms) > 1:
             from pyscf.geomopt.geometric_solver import optimize
 
-            mol_eq = optimize(mf, maxsteps=config.max_opt_steps)
+            # assert_convergence: a stalled geometry optimization must be an
+            # error, not a silently wrong energy — a +7 kcal/mol reference
+            # drift from exactly this slipped into the first relaxed scans.
+            mol_eq = optimize(
+                mf, maxsteps=config.max_opt_steps, assert_convergence=True
+            )
             mf = make_mf(mol_eq)
 
         energy = float(mf.kernel())

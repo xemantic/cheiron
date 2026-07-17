@@ -10,6 +10,43 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — A bug caught by unphysical numbers: silent geometry-opt non-convergence; methyl barrier is ≈8.2, and M1's discrimination now works
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The methyl+methane relaxed scan came back with a −7.7 kcal/mol "van der Waals
+well" at 2.6 Å — vdW binding for CH3/CH4 should be well under 1 kcal/mol, so
+the number was disbelieved on sight (project rule: never trust a number you
+didn't check). Diagnosis, in order:
+
+1. Instrumented the relaxed scan to save optimized geometries (`final_xyz` on
+   every point) — an energy without its geometry cannot be audited.
+2. Reran the 2.6 Å point: constraint held (2.601 Å), target H still on its
+   carbon (1.109 Å), clean vdW geometry, E−E∞ = **−0.75 kcal/mol**. Sensible.
+3. So the *points* were fine — the original run's fragment **reference** was
+   6.96 kcal/mol too high vs the M0 ledger's converged fragments. Root cause:
+   `evaluate_species` reported SCF convergence only; a geometry optimization
+   that stalls returns its last geometry and passes as "converged".
+   (The ethynyl scan's reference had the same disease, mildly: +0.62.)
+
+**Fixes, all pushed:** `assert_convergence=True` on every geometry
+optimization (a stalled opt is now an error, not a wrong number); correction
+records appended to `scans.jsonl` (append-only: originals stay, corrections
+supersede, with the drift documented in a `note`).
+
+**Corrected physics (UKS/PBE/def2-SVP, relaxed, vs M0 references):**
+
+| pair | profile verdict | barrier |
+|------|-----------------|--------:|
+| ethynyl + methane | monotonically downhill | **0.0** |
+| methyl + methane | well −0.75 @2.6 → peak @1.3 → product complex | **≈8.2** |
+
+The methyl profile is now textbook: shallow well, barrier at 1.3 Å, near-
+thermoneutral product complex. PBE undershoots the literature identity barrier
+(~14–18 kcal/mol) as GGAs do, so 8.2 is a lower bound; but the *discrimination*
+M1 was built for is live — same favorable-sign chemistry, an order-of-magnitude
+feasibility gap between the strong and weak tool.
+
 ## 2026-07-17 — First production feasibility number: ethynyl→methane is barrierless under approach
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
