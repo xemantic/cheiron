@@ -10,6 +10,26 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — BEP prediction tested: predicted 6.0, computed 4.8
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The previous entry's BEP fit (slope 0.41 from two points) predicted the
+methyl+ethane barrier at ≈6.0 kcal/mol. The relaxed scan (5 points, 1441 s,
+ledger reference) measured **4.75 kcal/mol** at d = 1.6 Å — right ordering,
+1.2 kcal/mol off in magnitude. With three barriers in hand (8.2, 4.75, 2.6 vs
+ΔE 0, −5.4, −13.6) the relation is visibly curved, not linear: the local slope
+runs 0.64 on the endothermic side and 0.26 toward the exothermic side. So BEP
+works here as a *screen* (rank candidates, spot outliers) but not as a
+substitute for the scan — which is the right division of labor anyway: cheap
+regularities propose, the arbiter disposes.
+
+Remaining unscanned: 2 ethynyl secondaries + cyclobutane (all safely
+predicted barrierless — ethynyl is barrierless even for methane, its hardest
+case) and methyl propane/butane/cyclobutane (BEP interpolation now predicts
+≈4.3–4.7). Diminishing returns per scan; the frontier should shift toward M2
+(selectivity) or the adamantane workpiece once the cheap wins are banked.
+
 ## 2026-07-17 — Barrier matrix complete; the loop rediscovers Brønsted–Evans–Polanyi
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
