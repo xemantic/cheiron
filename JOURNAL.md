@@ -10,6 +10,35 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — First approach-coordinate profile: ethynyl→methane entrance channel is attractive
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+First production rigid scan (UKS/PBE/def2-SVP, df, frozen fragments, 9 single
+points, 53 s), `habs-ethynyl-methane`, appended to `results/scans.jsonl`:
+
+| d(C···H) Å | 4.0 | 3.5 | 3.0 | 2.6 | 2.2 | 1.9 | 1.6 | 1.4 | 1.2 |
+|---|---|---|---|---|---|---|---|---|---|
+| E−E∞ kcal/mol | −0.1 | −0.2 | −0.5 | −0.9 | −1.8 | −3.2 | −4.3 | −2.7 | +6.6 |
+
+**Reading:** the entrance channel is attractive the whole way in to ~1.6 Å —
+no barrier under approach along the idealized collinear trajectory, consistent
+with C2H + alkane abstraction being known fast/near-barrierless. The upturn at
+short range is the *rigid approximation showing its edge*: the target H is
+frozen in the methane geometry and cannot transfer, so pushing to 1.2 Å just
+compresses a non-reacting system. Consequently `barrier_kcal() = 6.55` here is
+a wall-compression number, **not** a reaction barrier — the extractor is
+honest but the rigid coordinate stops being meaningful past the well.
+
+Method caveats, stated plainly: PBE (GGA) tends to underestimate abstraction
+barriers, and def2-SVP without counterpoise inflates the attraction (BSSE), so
+the −4.3 kcal/mol well depth is likely too deep. The *shape* — barrierless
+approach, well, wall — is the robust content.
+
+**Next:** a constrained *relaxed* scan (optimize with d(tool···H) frozen, all
+else free) so the H can actually transfer; that turns the profile into a real
+barrier estimate and replaces the wall artifact with chemistry.
+
 ## 2026-07-17 — M1 begins: approach-coordinate supersystem builder + rigid scan landed
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
