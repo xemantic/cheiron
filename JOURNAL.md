@@ -10,6 +10,30 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — First production feasibility number: ethynyl→methane is barrierless under approach
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+First def2-SVP **relaxed** approach scan (UKS/PBE, df; constrained
+optimizations, 152 s for 4 points), `habs-ethynyl-methane`, in `scans.jsonl`:
+
+| d(C···H) Å | 2.6 | 2.0 | 1.6 | 1.3 |
+|---|---|---|---|---|
+| E−E∞ kcal/mol | −1.6 | −3.8 | −8.2 | −16.7 |
+
+Monotonically downhill; **barrier under approach = 0.0 kcal/mol**. By 1.3 Å
+the constrained optimum already has the hydrogen migrating toward the tool —
+the −16.7 point is partway down the reaction exotherm (M0 measured −26.2 for
+completion). So the M0 "favorable" verdict for this pair upgrades to
+"favorable *and* mechanically feasible along the idealized collinear
+trajectory" — the first candidate to clear both axes. Caveat as always: PBE
+biases barriers low; but C2H + alkane abstraction is independently known to
+be near-barrierless, so the qualitative call stands.
+
+Next: the same relaxed scan for **methyl**+methane — PBE should show its
+identity barrier (literature ≈14 kcal/mol; PBE will undershoot) and give M1
+its first *blocked-despite-downhill-adjacent* contrast at production method.
+
 ## 2026-07-17 — Relaxed scan implemented: the H can now transfer, and barriers appear
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

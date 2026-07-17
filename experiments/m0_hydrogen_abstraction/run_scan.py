@@ -74,7 +74,7 @@ def main() -> int:
         return 1
     for d, e in sorted(scan.relative_kcal(), reverse=True):
         print(f"  d={d:4.2f} A   E-Einf = {e:+8.2f} kcal/mol")
-    print(f"rigid barrier estimate: {scan.barrier_kcal():.2f} kcal/mol  ({scan.wall_seconds:.0f}s)")
+    print(f"{mode} barrier estimate: {scan.barrier_kcal():.2f} kcal/mol  ({scan.wall_seconds:.0f}s)")
     return 0
 
 
