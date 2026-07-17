@@ -10,6 +10,29 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — First unfavorable result: the thermoneutral control comes back exactly 0
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The loop reached the first methyl-tool candidate, and it behaved exactly as a
+control should: `habs-methyl-methane` (CH3· + CH4 → CH4 + CH3·) is the identity
+reaction, and the arbiter returned **ΔE = +0.0 kcal/mol → unfavorable**
+(UKS/PBE/def2-SVP, df, opt; 40 s). This is the ledger's first non-favorable
+record, which matters more than another favorable one would have: it shows the
+pipeline discriminates rather than rubber-stamping, and the exact zero on a
+by-symmetry-thermoneutral reaction is a clean internal consistency check of the
+build→optimize→energy path (both sides optimized independently to the same
+species).
+
+Earlier the same loop evaluated `habs-ethynyl-cyclobutane`: **−35.1 kcal/mol,
+favorable** — slotting just below butane-secondary (−35.9), consistent with
+cyclobutane's C–H being marginally stronger than an acyclic secondary C–H
+(ring strain largely retained in the radical).
+
+Five methyl candidates remain pending; those against secondary/tertiary sites
+should come out mildly favorable (ΔE ≈ −2…−7 kcal/mol) — a much finer
+discrimination test than the ethynyl ladder.
+
 ## 2026-07-17 — Continuous operation is live; publishing to GitHub
 
 **Who:** Claude (Fable 5) as harness, on Kazik's follow-up: *always push results to
