@@ -10,6 +10,30 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — M1 begins: approach-coordinate supersystem builder + rigid scan landed
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+First M1 increment: new module `cheiron.approach` (test-backed, 9 new tests,
+17 total green).
+
+- `build_supersystem(spec, d)` places the tool radical on the workpiece C–H
+  axis — open valence aimed at the target H, collinear `C_w–H···Tool·` — at an
+  exact approach distance `d`. Tests pin atom count, spin, realized distance,
+  collinearity, orientation (tool's own H must face *away*), and clash
+  behavior when rammed.
+- `rigid_scan(spec, distances, config)` computes frozen-fragment single-point
+  energies referenced to the separated fragments, and `barrier_kcal()` extracts
+  the highest point above zero — the rigid estimate of the barrier under
+  approach. Rigid first, deliberately: it upper-bounds the true barrier, so
+  every later relaxed refinement has a number to beat.
+- STO-3G smoke test (methyl + methane, d = 4.0/3.0/2.5 Å): profile is ~0 at
+  4 Å and mildly attractive coming in (−0.9 kcal/mol at 2.5 Å) — sensible
+  long-range behavior; the repulsive wall lives at shorter range.
+
+Next: run the first real def2-SVP rigid scan on a known-favorable pair
+(ethynyl + methane) into the ledger, then extract and publish its barrier.
+
 ## 2026-07-17 — M0 grid complete (12/12); ΔE is additive across tool and workpiece to 0.1 kcal/mol
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

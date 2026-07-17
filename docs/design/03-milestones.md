@@ -28,11 +28,18 @@ reaction-energy record with `ΔE < 0` of the expected order, produced by the loo
 without hand-holding, and the journal's M0 entry reports the number with its
 method and caveats. That satisfies project criterion **S1**.
 
-## M1 — Feasibility, not just favorability
+## M1 — Feasibility, not just favorability · **in progress**
 
 Add the approach-coordinate scan to the arbiter so survivors report a **barrier
 under mechanical approach**, not only a reaction energy. Distinguish steps that
 are downhill-but-blocked from steps that actually proceed under positional load.
+
+Status: `cheiron.approach` builds the collinear `C–H···Tool·` supersystem at a
+controlled approach distance and runs a **rigid scan** (frozen fragments,
+single-point energies, referenced to the separated fragments) with a
+`barrier_kcal()` extraction. Geometry logic is test-covered; the first real
+def2-SVP scan on a known-favorable pair is next, then a constrained *relaxed*
+scan, then wiring the barrier into SCORE as the feasibility axis.
 
 ## M2 — Selectivity and tool integrity
 
