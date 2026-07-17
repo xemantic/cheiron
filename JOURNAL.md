@@ -10,6 +10,30 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-17 — M0 ladder complete: adamantane, and the cage-rigidity penalty
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+`habs-ethynyl-adamantane` evaluated: **ΔE = −35.2 kcal/mol** (UKS/PBE/def2-SVP,
+df, opt; 434 s), completing all three rungs of the M0 workpiece ladder
+(methane → isobutane → adamantane). The adamantane geometry is carved from the
+diamond lattice programmatically, so its correctness is test-pinned rather
+than trusted.
+
+The interesting part: naive expectation put the tertiary bridgehead near
+isobutane (−39.9), but it landed *below the acyclic secondaries* (−35.2 vs
+−35.9/−36.1). This is the **cage-rigidity penalty**: the bridgehead radical
+cannot planarize, so adamantane's tertiary C–H is unusually strong (known
+experimentally, BDE ≈ 99–100 kcal/mol vs isobutane's ≈96.5) — and the loop
+recovered the effect from geometry alone, third known regularity reproduced
+without being told (after bond-additivity and BEP). Project relevance: rigid,
+surface-like sites — the regime positional assembly actually operates in —
+are *harder* to abstract from than floppy analogues; favorability numbers
+taken on flexible model molecules will systematically flatter the real task.
+
+Remaining pending: methyl+adamantane (the weak tool against the rigid cage —
+expect only mildly favorable, ≈ −9 by additivity with the cage penalty).
+
 ## 2026-07-17 — BEP prediction tested: predicted 6.0, computed 4.8
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
