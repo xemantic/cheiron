@@ -52,6 +52,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=None,
                         help="evaluate at most N not-yet-done candidates (bounded tick)")
     parser.add_argument("--ledger", default=str(RESULTS / "ledger.jsonl"))
+    parser.add_argument("--max-memory", type=int, default=2000,
+                        help="PySCF working-memory cap in MB (shared-host survival knob)")
     args = parser.parse_args(argv)
 
     if args.fast:
@@ -63,6 +65,7 @@ def main(argv: list[str] | None = None) -> int:
         basis=args.basis,
         use_density_fitting=not args.no_df,
         optimize_geometry=not args.no_opt,
+        max_memory_mb=args.max_memory,
     )
 
     ledger = Ledger(args.ledger)
