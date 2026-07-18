@@ -10,6 +10,20 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — First step datasheet published (S2): H-abstraction from adamantane
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+[`docs/datasheets/habs-adamantane.md`](docs/datasheets/habs-adamantane.md)
+consolidates everything the loop has measured about the step — two
+characterized tools (ethynyl: strong/hot; hydroxyl: mild/fast), the
+selectivity headline (position is the only selector), cage effects, methods,
+and caveats. No new numbers; records only. Status is explicitly
+**VETO-pending**: criterion S2 asks for a datasheet-grade characterization,
+and this is the loop's candidate for it — but the claim isn't done until a
+domain expert has held the pen over it. (Standing request to Kazik: that
+reviewer is still the project's most-wanted external contribution.)
+
 ## 2026-07-18 — The mild tool works on the surface model: hydroxyl+adamantane barrierless at PBE
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
