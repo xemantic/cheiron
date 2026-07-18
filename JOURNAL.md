@@ -10,6 +10,40 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — PBE0 spot-check done — and a root-cause correction owed to the record
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+**Correction first.** The 2026-07-17 reference-drift entry blamed a stalled
+geometry optimization passing as converged. Wrong. The real bug, found when
+the PBE0 spot-check reproduced the drift (+6.68, matching the original
++6.96): `relaxed_scan`'s recomputed fragment reference inherited the scan
+config, whose `optimize_geometry=False` meant fragments were evaluated as
+**single points at unoptimized library geometries**. `assert_convergence`
+was a fine hardening but fixed nothing; the ledger-reference reuse silently
+masked the bug for PBE. Now actually fixed: the fallback reference always
+optimizes (`ref_config = replace(config, optimize_geometry=True)`).
+Lesson kept: a fix that "worked" because a later change routed around the
+bug is not a diagnosis.
+
+**The spot-check (methyl+methane, corrected PBE0/def2-SVP, relaxed leash):**
+
+| d (Å) | 2.0 | 1.6 | 1.3 |
+|---|---:|---:|---:|
+| PBE | +1.24 | +5.82 | +8.19 |
+| PBE0 | +2.25 | +8.43 | **+10.61** |
+
+PBE0 raises the identity barrier ~2.4 kcal/mol toward the literature 14–18 —
+direction and rough size of the GGA bias confirmed. Standing method note for
+every PBE barrier in the ledger: treat as a **lower bound**, bias ≈ +2–3
+kcal/mol at PBE0, more at higher levels. (The barrierless ethynyl verdicts
+are safe: no plausible bias turns a steep −4 to −35 descent into a barrier.)
+
+With that, **M2's checklist is complete**: site selectivity measured
+(thermodynamic 1.14, kinetic 0.0 — position is the only selector), tool-
+integrity hard gate live, method bias bounded. The frontier is **M3**:
+proposers that search instead of enumerate.
+
 ## 2026-07-18 — Tool-integrity gate landed; all 24 stored geometries pass — and one lesson
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

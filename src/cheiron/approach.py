@@ -348,8 +348,17 @@ def relaxed_scan(
         scan.reference_hartree = reference_hartree
         scan.reference_source = "ledger"
     else:
-        # Reference: independently optimized fragments (the M0 arbiter's species).
+        # Reference: independently OPTIMIZED fragments (the M0 arbiter's
+        # species). The scan config deliberately has optimize_geometry=False
+        # (scan points are constrained-optimized separately), so it must be
+        # overridden here — evaluating fragments as single points at library
+        # geometries silently shifted every recomputed reference several
+        # kcal/mol high (the true cause of the +6.96 drift of 2026-07-17).
+        from dataclasses import replace as dc_replace
+
         from .builder import build
+
+        ref_config = dc_replace(config, optimize_geometry=True)
 
         try:
             built = build(spec)
@@ -362,7 +371,7 @@ def relaxed_scan(
 
         refs = {}
         for species in (built.tool_radical, built.workpiece):
-            result = evaluate_species(species, config)
+            result = evaluate_species(species, ref_config)
             if result.energy_hartree is None or not result.converged:
                 scan.error = f"fragment reference failed for {species.role}: {result.error or 'not converged'}"
                 scan.wall_seconds = time.time() - start
