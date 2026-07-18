@@ -10,6 +10,31 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — M3 loop closes: predicted −15.7, measured −15.7
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+All five tools are anchored (UKS/PBE/def2-SVP, vs methane): ethynyl −26.2,
+hydroxyl −10.2, vinyl −3.1, amino −1.2, methyl 0.0 — a genuine
+abstractor-strength spectrum. (Amino landed on its bond-energy estimate;
+vinyl came in softer than the BDE guess, consistent with PBE compressing
+X–H differences.)
+
+Then the model went on trial: it predicted `habs-hydroxyl-ethane` at
+**−15.7**, and the arbiter measured **−15.7**. First full M3 cycle —
+propose from the prior, predict, verify, publish — and the prediction hit
+to the decimal. With 20 records the additive model's training residual is
+still 0.000 kcal/mol; within this reaction family at this method, additivity
+is not an approximation, it is the structure of the data.
+
+Where this goes next: the enumerative frontier is no longer interesting to
+*measure* exhaustively — the model owns it. Search value now lies in
+(a) anchoring more diverse tools (halogens? silyl? charged/strained
+abstractors — library work), (b) workpieces that should *break* additivity
+(conjugation, strain coupling, heteroatoms nearby) — publishing the first
+honest failure of the prior is worth more than ten confirmations, and
+(c) the M1/M2 axes (barriers, clamps) over the newly-anchored tools.
+
 ## 2026-07-18 — M3 first anchor: hydroxyl measured once, its ladder predicted whole
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
