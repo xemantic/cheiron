@@ -10,6 +10,34 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Five-tool kinetic map complete at PBE; lone-pair tools sit below the C-radical line
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Vinyl and amino barrier anchors landed (UKS/PBE/def2-SVP, relaxed leash, vs
+methane). The tool map, ΔE and barrier under approach:
+
+| tool | family | ΔE | barrier (PBE) | barrier (PBE0) |
+|------|--------|---:|---:|---:|
+| ethynyl | C·, sp | −26.2 | 0.0 | — |
+| hydroxyl | O·, lone pair | −10.2 | 0.0 | 1.8 |
+| vinyl | C·, sp² | −3.1 | 4.9 | — |
+| amino | N·, lone pair | −1.2 | 2.4 | — |
+| methyl | C·, sp³ | 0.0 | 8.2 | 10.6 |
+
+Reading: the C-radical tools form one coherent barrier–ΔE trend (methyl 8.2 →
+vinyl 4.9 → ethynyl 0, tracking exothermicity); the lone-pair tools sit
+**below** that line at matched ΔE (amino 2.4 where the C-line says ≈7.5;
+hydroxyl 0 where it says ≈3.6). Kinetically, heteroatom radicals are the
+bargain tools of this space.
+
+Caveats before enthusiasm: amino's 2.4 is the number most likely to move at
+PBE0 — literature puts NH₂+CH₄ around Ea ≈ 10, far above its PBE value, and
+SIE hits N lone-pair TSs hard. If PBE0 lifts amino back onto or above the
+C-line, the "lone-pair advantage" reduces to an oxygen-specific effect —
+worth knowing either way. PBE0 anchors for amino and vinyl are the queued
+next step; only then does this map feed SELECT.
+
 ## 2026-07-18 — PBE0 lands on experiment: hydroxyl barrier 1.8 (exp ≈ 1.7); family effect confirmed
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
