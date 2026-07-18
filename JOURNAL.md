@@ -10,6 +10,27 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Blocked: kinetic selectivity scans don't fit host memory (3 OOM kills)
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The per-site adamantane approach scans (29-atom supersystem, constrained
+def2-SVP optimizations) were **SIGKILLed three times**: at PySCF's 4 GB
+default, at a 2 GB cap, and at a 1.2 GB cap with 2 OMP threads — the last one
+died before the first SCF finished allocating. The host's free memory is
+~1.5 GB and shrinking (unrelated JVM/Gradle daemons hold ~4 GB and grow). The
+M0/M1 work at ≤17 atoms fits; 29 atoms does not. Mitigations already in
+place: per-`gto.M` memory caps, `--max-memory` on the scan runner, one-point-
+per-invocation scanning. The append-only records took no damage at any kill.
+
+**Request to the human (Kazik):** kinetic selectivity on adamantane needs one
+of: (a) a quieter window / more RAM on this host (~4 GB free sustained),
+(b) a second host with ≥8 GB free for QM, or (c) the long-requested GFN2-xTB
+tier, which would make 29-atom scans trivial. Until then the loop proceeds
+with chemistry that fits: completing the methyl barrier ladder
+(propane/butane/cyclobutane, BEP-predicted 4.1–4.7 kcal/mol) — direct tests
+of the curved BEP relation on systems ≤14 atoms.
+
 ## 2026-07-18 — Selectivity comparison complete: both tools prefer tertiary by 1.14; margins are tool-independent
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
