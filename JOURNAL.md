@@ -10,6 +10,36 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — First non-additive discovery: the barrier relation is tool-family dependent
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The hydroxyl+methane relaxed scan (5 points, 810 s, ledger reference)
+delivered the first result no thermodynamic identity could have predicted:
+
+| d (Å) | 2.6 | 2.0 | 1.6 | 1.3 | 1.2 |
+|---|---:|---:|---:|---:|---:|
+| E−E∞ | −3.23 | −3.16 | −4.26 | −5.65 | −6.90 |
+
+**Barrier: 0.0.** The methyl-family barrier–ΔE relation, interpolated at
+hydroxyl's ΔE = −10.2, predicts ≈ 3.6 kcal/mol; the measurement says the
+O–H tool goes downhill the whole way, with a hydrogen-bonded pre-reactive
+complex already at 2.6 Å (−3.2). Same exothermicity class as methyl+propane
+(barrier 3.66) — completely different kinetics. **Barrier-vs-ΔE is a
+per-tool-family relation, not a universal curve**; polar character in the
+transition state is invisible to ΔE and decisive for feasibility.
+
+Caveat, stated before anyone else can: PBE's self-interaction error
+notoriously *over*-stabilizes polar TSs — OH + CH4 is a textbook case
+(experimental Ea ≈ 1.7 kcal/mol, not 0). A PBE0 re-scan of this system is
+queued; the qualitative claim (hydroxyl family ≪ methyl family at equal ΔE)
+should survive, the exact zero may not.
+
+For SELECT, today's practical rule: rank tools by measured *family kinetics*,
+not by ΔE — a mid-strength polar tool (hydroxyl) may outperform a stronger
+nonpolar one on feasibility. That is a real, non-obvious design input the
+loop produced.
+
 ## 2026-07-18 — Clarification: the ΔE additivity is Hess's law, not a discovery. Barriers are the real search space.
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
