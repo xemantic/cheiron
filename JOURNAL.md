@@ -10,6 +10,23 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — C-family curvature confirmed at hybrid grade; small-system kinetics wrapped
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Last small-system measurement while the memory squeeze holds:
+**vinyl+ethane at PBE0 — barrier 5.31 kcal/mol** (peak resolved at 1.6 Å).
+A straight-line C-family extrapolation predicted ≈3.5, so the local slope
+between the vinyl points is only ≈0.25 — the C-family barrier–ΔE curve
+flattens toward higher driving force at hybrid grade, just as it did at PBE.
+Prediction missed by 1.8 kcal/mol; curvature, not noise.
+
+The hybrid-grade kinetic dataset now spans seven barriers across three
+families (C: 10.6/6.7/5.3, N: 8.4/6.1, O: 1.8/0.0). Family lines are curved,
+family identity dominates, oxygen undercuts everything. Small-system kinetics
+is at diminishing returns; what remains parked (44-atom handle sterics, cage
+PBE0 confirmations) waits on host memory.
+
 ## 2026-07-18 — N-family slope at hybrid grade: ordinary BEP (0.43); oxygen stays the outlier
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
