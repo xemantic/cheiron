@@ -37,4 +37,8 @@ WORKPIECES: dict[str, WorkpieceSpec] = {
     # diamond C(111) surface site. Tertiary C-H is the abstraction target.
     # Custom-built geometry (not in G2) — see chemistry.species.
     "adamantane": WorkpieceSpec(id="adamantane", saturated_name="adamantane", abstract_site="tertiary"),
+    # The SAME cage offered through its secondary (CH2) site — the M2
+    # selectivity probe: a selective tool should prefer the tertiary site above;
+    # the margin between the two candidates is the site-preference measurement.
+    "adamantane-2h": WorkpieceSpec(id="adamantane-2h", saturated_name="adamantane", abstract_site="secondary"),
 }

@@ -45,12 +45,20 @@ takes the barrier: feasible gate at 15 kcal/mol, fitness = −ΔE − 2·barrier
 (ethynyl+isobutane first), surface barriers in the published summary, and a
 hybrid-functional cross-check of the PBE barriers.
 
-## M2 — Selectivity and tool integrity
+## M2 — Selectivity and tool integrity · **in progress**
 
 Introduce workpieces with multiple inequivalent C–H sites and score whether the
 tool geometry selects the intended one. Add the tool-integrity check as a hard
 gate. First candidates for a *novel* datasheet (criterion **S2**) come from
 here.
+
+Status: adamantane is exposed through both its sites (`adamantane` tertiary,
+`adamantane-2h` secondary) and `cheiron.selectivity` groups evaluated
+candidates into per-(tool, molecule) site comparisons with a preference
+margin. Thermodynamic (ΔE-based) first; the kinetic version reuses the same
+structure with per-site approach barriers. Pending: evaluate the
+`adamantane-2h` candidates, surface comparisons in the summary, then the
+tool-integrity gate.
 
 ## M3 — Search, not enumeration
 

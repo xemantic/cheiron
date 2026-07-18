@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from cheiron.arbiter import ArbiterConfig, ReactionMeasurement, SpeciesResult
 from cheiron.builder import build
 from cheiron.chemistry.library import TOOLS, WORKPIECES
@@ -198,4 +200,47 @@ def test_adamantane_builds_into_reaction():
     built = build(_spec("ethynyl", "adamantane"))
     product = built.product_radical.atoms
     assert product.get_chemical_symbols().count("H") == 15  # tertiary H removed
+    assert built.product_radical.spin == 1
+
+
+def _ledger_record(spec_id, tool_id, molecule, site, de_kcal, valid=True):
+    return {
+        "spec": {
+            "id": spec_id,
+            "tool": {"id": tool_id},
+            "workpiece": {"saturated_name": molecule, "abstract_site": site},
+        },
+        "fitness": {"valid": valid, "reaction_energy_kcal": de_kcal},
+    }
+
+
+def test_site_comparison_ranks_and_reports_margin():
+    from cheiron.selectivity import site_comparisons
+
+    latest = {
+        "a": _ledger_record("a", "ethynyl", "adamantane", "tertiary", -35.2),
+        "b": _ledger_record("b", "ethynyl", "adamantane", "secondary", -33.0),
+        "c": _ledger_record("c", "ethynyl", "CH4", "any", -26.2),  # single site: no pair
+    }
+    comps = site_comparisons(latest)
+    assert len(comps) == 1
+    comp = comps[0]
+    assert comp.preferred_site == "tertiary"
+    assert comp.margin_kcal == pytest.approx(2.2, abs=1e-9)
+
+
+def test_site_comparison_ignores_invalid_measurements():
+    from cheiron.selectivity import site_comparisons
+
+    latest = {
+        "a": _ledger_record("a", "ethynyl", "adamantane", "tertiary", -35.2),
+        "b": _ledger_record("b", "ethynyl", "adamantane", "secondary", None, valid=False),
+    }
+    assert site_comparisons(latest) == []
+
+
+def test_adamantane_secondary_workpiece_builds():
+    built = build(_spec("ethynyl", "adamantane-2h"))
+    # secondary abstraction removes a CH2 hydrogen: product keeps 15 H
+    assert built.product_radical.atoms.get_chemical_symbols().count("H") == 15
     assert built.product_radical.spin == 1
