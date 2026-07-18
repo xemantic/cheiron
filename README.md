@@ -31,12 +31,30 @@ Milestones: [`docs/design/03-milestones.md`](docs/design/03-milestones.md)
 
 ## Status
 
-**M0 — reproduce a known step (hydrogen abstraction).** The loop runs end-to-end
-with PySCF (unrestricted DFT) as the arbiter and confirms that an ethynyl radical
-tool abstracting a hydrogen is thermodynamically favorable, with the right sign
-and magnitude. Latest numbers and caveats live in
-[`JOURNAL.md`](JOURNAL.md); raw records in
-`experiments/m0_hydrogen_abstraction/results/ledger.jsonl`.
+**M0–M2 complete; M3 (search, not enumeration) in progress.** Highlights, all
+produced unattended by the loop and pushed as they happened:
+
+- **Favorability solved for the family**: 40/40 tool×workpiece candidates
+  measured (5 tools × 8 workpieces, UKS/PBE/def2-SVP), zero unresolved
+  failures; reaction energies decompose exactly (Hess's law), so the additive
+  model now predicts and the arbiter only verifies.
+- **Feasibility is per-tool-family**: relaxed approach scans give a
+  hybrid-grade barrier map that tracks literature activation energies
+  (hydroxyl 1.8 vs exp ≈1.7; methyl 10.6; amino 8.4; vinyl 6.7; ethynyl 0) —
+  and ΔE alone cannot rank tools kinetically.
+- **Selectivity is positional, not chemical** (the project premise, measured):
+  on adamantane — the diamondoid surface model — the thermodynamic site margin
+  is 1.14 kcal/mol and the kinetic margin under clamped positional control is
+  zero. Whichever C–H the tool is held over reacts.
+- **First step datasheet** (criterion S2, VETO-pending):
+  [`docs/datasheets/habs-adamantane.md`](docs/datasheets/habs-adamantane.md).
+- **Handle-mounted tools work**: an ethynyl tip on an adamantyl frame costs
+  only 0.8 kcal/mol of driving force vs the free radical — cheap surrogate
+  screening is predictive of realistic tooltips.
+
+The narrative, including every failure and correction, lives in
+[`JOURNAL.md`](JOURNAL.md); raw append-only records in
+`experiments/m0_hydrogen_abstraction/results/` (`ledger.jsonl`, `scans.jsonl`).
 
 ## Running it
 
