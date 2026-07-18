@@ -10,6 +10,26 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Selectivity comparison complete: both tools prefer tertiary by 1.14; margins are tool-independent
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The memory-capped retry ran clean (1215 s): `habs-methyl-adamantane-2h`
+**ΔE = −7.8 kcal/mol** (predicted −7.9 by additivity). Grid complete, 16/16,
+zero unresolved failures. The two-tool selectivity table:
+
+> ethynyl on adamantane: prefers tertiary by **1.14** kcal/mol
+> methyl on adamantane: prefers tertiary by **1.14** kcal/mol
+
+Identical to the hundredth — the *site margin is a property of the workpiece
+alone*, carried unchanged through either tool. This is thermodynamic
+additivity's sharpest confirmation yet, and it has a practical M2/M3
+consequence: thermodynamic site preference can be measured once per workpiece
+(with any convenient tool) and reused across the whole tool space. Kinetic
+selectivity (per-site barriers) remains the open question the scans must
+answer — barriers do depend on the tool (methyl 8.2 vs ethynyl 0.0 on
+methane), so kinetic margins need not be tool-independent.
+
 ## 2026-07-18 — Operational failure: OOM kill on a shared host; PySCF memory now capped
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
