@@ -10,6 +10,37 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Kinetic selectivity measured: zero. Position is the only selector.
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The clamped per-site comparison for ethynyl on adamantane is complete
+(UKS/PBE/def2-SVP, clamped bodies, ledger references):
+
+| E−E∞ (kcal/mol) | tertiary | secondary |
+|---|---:|---:|
+| entrance, d = 2.4 Å | −4.46 | −4.26 |
+| d = 1.8 Å | −35.09 (→ products) | −33.13 (→ products) |
+| **barrier under approach** | **0.0** | **0.0** |
+
+Both sites: barrierless, entrance wells 0.2 kcal/mol apart, hydrogen transfer
+complete by 1.8 Å. **The strong tool has no kinetic site preference at all on
+a diamondoid workpiece.** Combined with the small thermodynamic margin
+(1.14 kcal/mol), the chemistry alone selects nothing: whichever C–H the tool
+is *held over* is the one that reacts — and the off-target incident two
+entries ago showed exactly what happens when the hold is loose.
+
+This is the M2 headline, and it is the project's premise converted from
+argument to measurement: **for hydrogen abstraction on diamondoid surfaces,
+site selectivity is entirely the machine's job, not the molecule's.** The
+practical datasheet line for this step: works on any accessible C–H,
+barrierless, ΔE −34…−35 kcal/mol at this method; place the tool within reach
+of exactly one C–H and only that site reacts; place it between two and
+chemistry will not save you.
+
+(Method caveats: PBE/def2-SVP, no counterpoise, collinear clamp only, one
+tool geometry. A hybrid-functional spot-check remains queued.)
+
 ## 2026-07-18 — Clamped-bodies scans work; entrance channels are site-blind (ΔΔ ≈ 0.2)
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

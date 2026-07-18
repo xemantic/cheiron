@@ -52,13 +52,16 @@ tool geometry selects the intended one. Add the tool-integrity check as a hard
 gate. First candidates for a *novel* datasheet (criterion **S2**) come from
 here.
 
-Status: adamantane is exposed through both its sites (`adamantane` tertiary,
-`adamantane-2h` secondary) and `cheiron.selectivity` groups evaluated
-candidates into per-(tool, molecule) site comparisons with a preference
-margin. Thermodynamic (ΔE-based) first; the kinetic version reuses the same
-structure with per-site approach barriers. Pending: evaluate the
-`adamantane-2h` candidates, surface comparisons in the summary, then the
-tool-integrity gate.
+Status: **site-selectivity measurement complete for ethynyl on adamantane.**
+Thermodynamic margin: tertiary preferred by 1.14 kcal/mol (tool-independent).
+Kinetic margin under clamped-bodies positional control: **zero** — both sites
+barrierless, entrance wells 0.2 kcal/mol apart, transfer complete by 1.8 Å.
+Conclusion (the M2 headline): on diamondoid workpieces, site selectivity is
+entirely positional; chemistry does not discriminate. Method notes: one-leash
+scans mismeasure crowded sites (tool slides off-target — measured); the
+clamped-bodies scan (two Cartesian anchors per body, transferring H free) is
+the positional-control model. Remaining for M2: the tool-integrity hard gate,
+and a hybrid-functional spot-check of the PBE numbers.
 
 ## M3 — Search, not enumeration
 
