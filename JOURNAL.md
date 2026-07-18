@@ -10,6 +10,26 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — The handle doesn't spoil the tip: ethynyl-adamantyl at −25.4
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+First handle-mounted tool measured: `habs-ethynyl-ada-methane`
+**ΔE = −25.4 kcal/mol** (UKS/PBE/def2-SVP, df, opt; 959 s at a 1.2 GB memory
+cap after one OOM retry — `run.py` now has the same `--max-memory` survival
+knob as the scanner). Free ethynyl: −26.2. **The adamantyl handle costs just
+0.8 kcal/mol of driving force** — mounting the tip on a rigid frame a
+positioning machine could hold leaves its abstraction thermodynamics
+essentially intact.
+
+Why this matters: it licenses the loop's whole screening strategy. Small
+free-radical surrogates are thermodynamically predictive of realistic
+tooltips, so tool-space search can stay cheap and only graduate winners to
+handle-mounted form. The place the handle *should* matter is sterics — a
+bulky frame approaching a crowded site — which is exactly the clamped-scan
+question queued next for this tool (tip vs the cage's secondary site, where
+free ethynyl needed positional control to stay on target).
+
 ## 2026-07-18 — Grid complete: 40/40, every prediction within 0.1 kcal/mol
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
