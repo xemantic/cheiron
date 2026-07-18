@@ -10,6 +10,31 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Tool-integrity gate landed; all 24 stored geometries pass — and one lesson
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+`cheiron.integrity` implements M2's hard gate: a step may change the bonding
+graph only by the intended transfer (target H off its carbon, onto the tool
+center); anything else — tool fragmentation, workpiece rearrangement, bonding
+to the wrong site — fails, regardless of how good the energy looks. 34 tests
+green; `scripts/audit_integrity.py` runs the gate over every stored scan
+geometry (exit 1 on failure, CI-usable).
+
+Audit of all 24 stored relaxed-scan points: **all pass**. No tool ever broke,
+no workpiece ever rearranged, and the transfer flags line up with the
+energies (products exactly where the profiles said).
+
+The instructive subtlety: the **off-target point passes the gate**. When the
+one-leash tool slid toward neighboring hydrogens it *approached* them
+(1.83 Å) but never bonded — connectivity intact, position wrong. Integrity
+and positional fidelity are different failure classes: the gate catches
+broken chemistry, only trajectory auditing (`final_xyz` + geometry checks)
+catches misdirected chemistry. A positional-assembly pipeline needs both,
+and now has both.
+
+M2 remaining: hybrid-functional spot-check of the PBE numbers.
+
 ## 2026-07-18 — Kinetic selectivity measured: zero. Position is the only selector.
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

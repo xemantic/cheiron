@@ -112,3 +112,68 @@ def test_constraint_file_with_frozen_atoms():
 def test_constraint_file_requires_some_constraint():
     with pytest.raises(ValueError):
         constraint_file_text()
+
+
+def _shift_h_to_tool(system):
+    """Fake a completed transfer: move the target H next to the tool center."""
+    atoms = system.atoms.copy()
+    pos = atoms.get_positions()
+    ct, th = system.tool_center, system.target_h
+    direction = pos[th] - pos[ct]
+    direction /= np.linalg.norm(direction)
+    pos[th] = pos[ct] + direction * 1.09
+    atoms.set_positions(pos)
+    return atoms
+
+
+def test_integrity_accepts_clean_transfer():
+    from cheiron.integrity import check_step_integrity
+
+    system = build_supersystem(_spec("methyl", "methane"), 2.8)
+    final = _shift_h_to_tool(system)
+    result = check_step_integrity(
+        system.atoms, final, system.target_h, system.workpiece_carbon, system.tool_center
+    )
+    assert result.ok and result.transferred
+
+
+def test_integrity_accepts_no_reaction():
+    from cheiron.integrity import check_step_integrity
+
+    system = build_supersystem(_spec("methyl", "methane"), 2.8)
+    result = check_step_integrity(
+        system.atoms, system.atoms.copy(),
+        system.target_h, system.workpiece_carbon, system.tool_center,
+    )
+    assert result.ok and not result.transferred
+
+
+def test_integrity_rejects_tool_fragmentation():
+    from cheiron.integrity import check_step_integrity
+
+    system = build_supersystem(_spec("methyl", "methane"), 2.8)
+    broken = system.atoms.copy()
+    pos = broken.get_positions()
+    # rip a hydrogen off the tool (an atom that is neither target H nor anchor)
+    tool_h = system.tool_center + 1
+    pos[tool_h] += np.array([0.0, 0.0, 5.0])
+    broken.set_positions(pos)
+    result = check_step_integrity(
+        system.atoms, broken, system.target_h, system.workpiece_carbon, system.tool_center
+    )
+    assert not result.ok and result.unexpected_lost
+
+
+def test_integrity_roundtrip_through_xyz_body():
+    from cheiron.integrity import atoms_from_xyz_body, check_step_integrity
+
+    system = build_supersystem(_spec("ethynyl", "methane"), 3.0)
+    body = "\n".join(
+        f"{s} {p[0]:.6f} {p[1]:.6f} {p[2]:.6f}"
+        for s, p in zip(system.atoms.get_chemical_symbols(), system.atoms.get_positions())
+    )
+    rebuilt = atoms_from_xyz_body(body)
+    result = check_step_integrity(
+        system.atoms, rebuilt, system.target_h, system.workpiece_carbon, system.tool_center
+    )
+    assert result.ok
