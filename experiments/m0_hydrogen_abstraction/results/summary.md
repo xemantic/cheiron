@@ -31,3 +31,14 @@ fragments; feasible gate at 15 kcal/mol. '—' = not yet scanned.
 | habs-methyl-adamantane-2h | methyl | adamantane-2h | secondary | -7.8 | yes | — | — |
 | habs-methyl-ethane | methyl | ethane | primary | -5.4 | yes | 4.7 | yes |
 | habs-methyl-methane | methyl | methane | any | +0.0 | no | 8.2 | yes |
+
+## Site selectivity (M2, thermodynamic)
+
+ΔΔE margin between the preferred and runner-up C–H site of the
+same molecule under the same tool. Kinetic (barrier) margins are
+the sharper question and come from per-site approach scans.
+
+| tool | molecule | preferred site | margin (kcal/mol) |
+|------|----------|----------------|------------------:|
+| ethynyl | adamantane | tertiary | 1.14 |
+| methyl | adamantane | tertiary | 1.14 |

@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from cheiron.ledger import Ledger  # noqa: E402
 from cheiron.score import FEASIBLE_BARRIER_KCAL  # noqa: E402
+from cheiron.selectivity import site_comparisons  # noqa: E402
 
 
 def load_barriers(scans_path: Path) -> dict[str, float]:
@@ -94,6 +95,25 @@ def build_summary(ledger_path: Path) -> str:
             f"| {'yes' if fit['favorable'] else 'no'} "
             f"| {barrier_cell} | {feasible_cell} |"
         )
+
+    comparisons = site_comparisons(ledger.latest_by_spec())
+    if comparisons:
+        lines += [
+            "",
+            "## Site selectivity (M2, thermodynamic)",
+            "",
+            "ΔΔE margin between the preferred and runner-up C–H site of the",
+            "same molecule under the same tool. Kinetic (barrier) margins are",
+            "the sharper question and come from per-site approach scans.",
+            "",
+            "| tool | molecule | preferred site | margin (kcal/mol) |",
+            "|------|----------|----------------|------------------:|",
+        ]
+        for c in comparisons:
+            lines.append(
+                f"| {c.tool_id} | {c.molecule} | {c.preferred_site} "
+                f"| {c.margin_kcal:.2f} |"
+            )
 
     if failed:
         lines += ["", "## Unusable / failed", ""]
