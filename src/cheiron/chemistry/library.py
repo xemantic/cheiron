@@ -20,6 +20,13 @@ TOOLS: dict[str, ToolSpec] = {
     # discriminate a good tool from a poor one, and so the ledger records honest
     # marginal/unfavorable steps, not just wins.
     "methyl": ToolSpec(id="methyl", saturated_name="CH4", donor_site="any"),
+    # --- M3 expansion: span the abstractor-strength axis, seeded by the
+    # additivity result (one methane measurement predicts a tool's whole
+    # ladder). Approximate X-H bond strengths of the saturated forms:
+    # H2O ~119 (hydroxyl: strongest here), NH3 ~107, C2H4 vinyl C-H ~111.
+    "hydroxyl": ToolSpec(id="hydroxyl", saturated_name="H2O", donor_site="any"),
+    "amino": ToolSpec(id="amino", saturated_name="NH3", donor_site="any"),
+    "vinyl": ToolSpec(id="vinyl", saturated_name="C2H4", donor_site="any"),
 }
 
 # Hydrogenated workpieces, cheap -> realistic (the M0 "workpiece ladder").

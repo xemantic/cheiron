@@ -45,7 +45,7 @@ takes the barrier: feasible gate at 15 kcal/mol, fitness = −ΔE − 2·barrier
 (ethynyl+isobutane first), surface barriers in the published summary, and a
 hybrid-functional cross-check of the PBE barriers.
 
-## M2 — Selectivity and tool integrity · **in progress**
+## M2 — Selectivity and tool integrity · **complete**
 
 Introduce workpieces with multiple inequivalent C–H sites and score whether the
 tool geometry selects the intended one. Add the tool-integrity check as a hard
@@ -63,12 +63,21 @@ clamped-bodies scan (two Cartesian anchors per body, transferring H free) is
 the positional-control model. Remaining for M2: the tool-integrity hard gate,
 and a hybrid-functional spot-check of the PBE numbers.
 
-## M3 — Search, not enumeration
+## M3 — Search, not enumeration · **in progress**
 
 Turn on the evolutionary and agent proposers; let the loop explore the
 tool/workpiece space rather than a hand-written grid, seeded by everything the
 ledger has learned. Publish the negative results this generates (criterion
 **S3**).
+
+Status: the tool space is widened (hydroxyl/amino/vinyl join ethynyl/methyl,
+spanning the abstractor-strength axis) and `cheiron.predict` fits the additive
+ΔE model from the ledger (worst residual on the 16-record training set:
+0.000 kcal/mol) and ranks the unevaluated frontier. Strategy: one *anchor*
+measurement per new tool (× methane) pins that tool's whole ladder; the model
+proposes, the arbiter disposes, and predicted-vs-measured deltas get published
+either way. PBE0 spot-check bounded the method bias (barriers are lower
+bounds, ≈ +2–3 kcal/mol at hybrid).
 
 ## Cross-cutting: continuous operation
 

@@ -244,3 +244,51 @@ def test_adamantane_secondary_workpiece_builds():
     # secondary abstraction removes a CH2 hydrogen: product keeps 15 H
     assert built.product_radical.atoms.get_chemical_symbols().count("H") == 15
     assert built.product_radical.spin == 1
+
+
+def test_new_tools_build_with_correct_spins():
+    """Hydroxyl (9 e), amino (9 e), vinyl (15 e) must all be doublets, their
+    saturated forms closed-shell."""
+    for tool_id, workpiece_id in (("hydroxyl", "methane"), ("amino", "methane"),
+                                  ("vinyl", "methane")):
+        built = build(_spec(tool_id, workpiece_id))
+        assert built.tool_radical.spin == 1, tool_id
+        assert built.tool_saturated.spin == 0, tool_id
+
+
+def test_additive_model_recovers_exact_structure():
+    from cheiron.predict import fit_additive_model
+
+    latest = {}
+    tool_terms = {"t1": 0.0, "t2": 20.0}
+    wp_terms = {"w1": 0.0, "w2": -5.0, "w3": -10.0}
+    for t, a in tool_terms.items():
+        for w, b in wp_terms.items():
+            sid = f"habs-{t}-{w}"
+            latest[sid] = _ledger_record(sid, t, w, "any", -30.0 + a + b)
+            latest[sid]["spec"]["workpiece"]["id"] = w
+    model = fit_additive_model(latest)
+    assert model.residual_max_kcal < 1e-9
+    # exactly-additive data: predictions reproduce inputs
+    assert model.predict("t2", "w3") == pytest.approx(-30.0 + 20.0 - 10.0)
+
+
+def test_rank_unevaluated_orders_by_predicted_favorability():
+    from cheiron.predict import fit_additive_model, rank_unevaluated
+
+    latest = {}
+    for t, a in (("t1", 0.0), ("t2", 20.0)):
+        for w, b in (("w1", 0.0), ("w2", -5.0)):
+            sid = f"habs-{t}-{w}"
+            latest[sid] = _ledger_record(sid, t, w, "any", -30.0 + a + b)
+            latest[sid]["spec"]["workpiece"]["id"] = w
+    model = fit_additive_model(latest)
+    ranked = rank_unevaluated(
+        model, ["t1", "t2", "t_new"], ["w1", "w2", "w3"], set(latest)
+    )
+    ids = [sid for sid, _ in ranked]
+    # w3 unseen and t_new unseen -> unpredictable entries sort last
+    assert all(pred is None for sid, pred in ranked if "t_new" in sid or "w3" in sid)
+    # best predictable proposal would be t1 on w2... but that's evaluated;
+    # nothing predictable remains except pairs with unseen factors
+    assert ids  # non-empty: the frontier is never silently empty
