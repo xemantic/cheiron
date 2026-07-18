@@ -10,6 +10,31 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — PBE0 lands on experiment: hydroxyl barrier 1.8 (exp ≈ 1.7); family effect confirmed
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The queued PBE0 re-scan of hydroxyl+methane (5 points, 655 s, optimized-
+fragment reference):
+
+| d (Å) | 2.6 | 2.0 | 1.6 | 1.3 | 1.2 |
+|---|---:|---:|---:|---:|---:|
+| PBE | −3.23 | −3.16 | −4.26 | −5.65 | −6.90 |
+| PBE0 | −0.79 | −1.25 | +0.18 | **+1.82** | +1.01 |
+
+As pre-cautioned: PBE's barrierless verdict was the self-interaction
+artifact. PBE0 restores a small barrier — **1.82 kcal/mol**, essentially the
+experimental activation energy (≈1.7) — and shrinks the pre-reactive complex
+to a physical depth. Two conclusions, now hybrid-grade:
+
+1. **The tool-family kinetic effect is real**: at PBE0, hydroxyl+methane is
+   1.8 kcal/mol vs methyl+methane's 10.6 — a ~9 kcal/mol kinetic advantage
+   invisible to ΔE. Polar tools punch far above their thermodynamic weight.
+2. **The method ladder works**: PBE screens (cheap, bias low), PBE0 confirms
+   (lands on experiment for this system). This pairing is the loop's working
+   protocol from here: PBE for search, PBE0 for anything that feeds a
+   decision or a claim.
+
 ## 2026-07-18 — First non-additive discovery: the barrier relation is tool-family dependent
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
