@@ -48,6 +48,12 @@ def main() -> int:
         help="PySCF working-memory cap in MB (shared-host survival knob)",
     )
     parser.add_argument(
+        "--clamped",
+        action="store_true",
+        help="clamp both bodies in space (positional-control trajectory); "
+        "the transferring H stays free",
+    )
+    parser.add_argument(
         "--out", type=Path, default=Path(__file__).parent / "results" / "scans.jsonl"
     )
     args = parser.parse_args()
@@ -78,7 +84,13 @@ def main() -> int:
         ledger = Ledger(Path(__file__).parent / "results" / "ledger.jsonl")
         reference = ledger.fragment_reference(spec.id, opt_method)
         print(f"fragment reference: {'ledger (' + opt_method + ')' if reference is not None else 'recomputing'}")
-        scan = relaxed_scan(spec, list(args.distances), config, reference_hartree=reference)
+        scan = relaxed_scan(
+            spec,
+            list(args.distances),
+            config,
+            reference_hartree=reference,
+            clamp_bodies=args.clamped,
+        )
     else:
         scan = rigid_scan(spec, list(args.distances), config)
 

@@ -102,3 +102,13 @@ def test_constraint_file_uses_one_based_indices():
     Off-by-one here would silently freeze the wrong atom pair."""
     text = constraint_file_text(3, 6)
     assert text.splitlines() == ["$freeze", "distance 4 7"]
+
+
+def test_constraint_file_with_frozen_atoms():
+    text = constraint_file_text(frozen_atoms=[0, 4, 5, 7])
+    assert text.splitlines() == ["$freeze", "xyz 1", "xyz 5", "xyz 6", "xyz 8"]
+
+
+def test_constraint_file_requires_some_constraint():
+    with pytest.raises(ValueError):
+        constraint_file_text()

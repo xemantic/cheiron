@@ -221,17 +221,40 @@ def _single_point(atoms: Atoms, spin: int, config: ArbiterConfig) -> tuple[float
         return None, False, f"{type(exc).__name__}: {exc}"
 
 
-def constraint_file_text(atom_i: int, atom_j: int) -> str:
-    """geomeTRIC ``$freeze`` block pinning one interatomic distance.
+def constraint_file_text(
+    atom_i: int | None = None,
+    atom_j: int | None = None,
+    frozen_atoms: list[int] | None = None,
+) -> str:
+    """geomeTRIC ``$freeze`` block pinning the approach coordinate.
+
+    Two modes, combinable: freeze the (i, j) distance (the one-leash scan),
+    and/or freeze whole atoms in Cartesian space (``frozen_atoms`` — the
+    clamped-bodies scan). One frozen distance alone is a leash, not positional
+    control: on a crowded workpiece the tool swings around the target toward
+    whatever site the chemistry prefers (measured 2026-07-18); and a frozen
+    exactly-linear angle breaks geomeTRIC's internal coordinates, so the
+    orientation clamp is Cartesian.
 
     geomeTRIC constraint files use **1-based** atom indices; the caller passes
     the 0-based indices used everywhere else in cheiron.
     """
-    return f"$freeze\ndistance {atom_i + 1} {atom_j + 1}\n"
+    lines = ["$freeze"]
+    if atom_i is not None and atom_j is not None:
+        lines.append(f"distance {atom_i + 1} {atom_j + 1}")
+    for a in frozen_atoms or []:
+        lines.append(f"xyz {a + 1}")
+    if len(lines) == 1:
+        raise ValueError("no constraints requested")
+    return "\n".join(lines) + "\n"
 
 
 def _constrained_optimize(
-    atoms: Atoms, spin: int, frozen_pair: tuple[int, int], config: ArbiterConfig
+    atoms: Atoms,
+    spin: int,
+    frozen_pair: tuple[int, int] | None,
+    config: ArbiterConfig,
+    frozen_atoms: list[int] | None = None,
 ) -> tuple[float | None, bool, str | None, str | None]:
     """Optimize with one distance frozen.
 
@@ -270,7 +293,8 @@ def _constrained_optimize(
         fd, cpath = tempfile.mkstemp(suffix=".txt", text=True)
         try:
             with os.fdopen(fd, "w") as f:
-                f.write(constraint_file_text(*frozen_pair))
+                pair = frozen_pair or (None, None)
+                f.write(constraint_file_text(pair[0], pair[1], frozen_atoms))
             mol_eq = optimize(
                 make_mf(mol),
                 constraints=cpath,
@@ -299,6 +323,7 @@ def relaxed_scan(
     distances: list[float],
     config: ArbiterConfig,
     reference_hartree: float | None = None,
+    clamp_bodies: bool = False,
 ) -> ApproachScan:
     """Constrained relaxed scan: freeze d(tool_center···target_H), relax the rest.
 
@@ -312,9 +337,10 @@ def relaxed_scan(
     the most expensive part of a scan.
     """
     start = time.time()
+    mode = " [relaxed scan, clamped]" if clamp_bodies else " [relaxed scan]"
     scan = ApproachScan(
         spec_id=spec.id,
-        method=config.method_string() + " [relaxed scan]",
+        method=config.method_string() + mode,
         kind="relaxed_approach_scan",
     )
 
@@ -355,9 +381,36 @@ def relaxed_scan(
             )
             continue
         clash = has_clash(system.atoms)
-        energy, converged, error, xyz = _constrained_optimize(
-            system.atoms, system.spin, (system.target_h, system.tool_center), config
-        )
+        if clamp_bodies:
+            # Positional-control model: anchor each body's position AND
+            # orientation by freezing two atoms per body in Cartesian space —
+            # the workpiece carbon plus its farthest atom, the tool center
+            # plus its farthest atom. The transferring H stays free, so no
+            # frozen distance (the approach coordinate is the body separation
+            # built into the geometry).
+            pos = system.atoms.get_positions()
+            n_wp = len(saturated(spec.workpiece.saturated_name))
+            wp_indices = [i for i in range(n_wp) if i != system.target_h]
+            tool_indices = list(range(n_wp, len(pos)))
+            far_wp = max(
+                wp_indices, key=lambda i: np.linalg.norm(pos[i] - pos[system.target_h])
+            )
+            far_tool = max(
+                tool_indices, key=lambda i: np.linalg.norm(pos[i] - pos[system.tool_center])
+            )
+            anchors = sorted(
+                {system.workpiece_carbon, far_wp, system.tool_center, far_tool}
+            )
+            energy, converged, error, xyz = _constrained_optimize(
+                system.atoms, system.spin, None, config, frozen_atoms=anchors
+            )
+        else:
+            energy, converged, error, xyz = _constrained_optimize(
+                system.atoms,
+                system.spin,
+                (system.target_h, system.tool_center),
+                config,
+            )
         scan.points.append(
             ScanPoint(d, energy, converged, clash, time.time() - point_start, error, xyz)
         )
