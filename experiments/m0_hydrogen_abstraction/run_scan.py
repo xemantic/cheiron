@@ -42,6 +42,12 @@ def main() -> int:
         help="constrained relaxed scan (H can transfer) instead of rigid",
     )
     parser.add_argument(
+        "--max-memory",
+        type=int,
+        default=2000,
+        help="PySCF working-memory cap in MB (shared-host survival knob)",
+    )
+    parser.add_argument(
         "--out", type=Path, default=Path(__file__).parent / "results" / "scans.jsonl"
     )
     args = parser.parse_args()
@@ -52,7 +58,10 @@ def main() -> int:
         workpiece=WORKPIECES[args.workpiece],
     )
     config = ArbiterConfig(
-        functional=args.functional, basis=args.basis, optimize_geometry=False
+        functional=args.functional,
+        basis=args.basis,
+        optimize_geometry=False,
+        max_memory_mb=args.max_memory,
     )
 
     mode = "relaxed" if args.relaxed else "rigid"
