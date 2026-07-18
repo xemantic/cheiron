@@ -27,6 +27,14 @@ TOOLS: dict[str, ToolSpec] = {
     "hydroxyl": ToolSpec(id="hydroxyl", saturated_name="H2O", donor_site="any"),
     "amino": ToolSpec(id="amino", saturated_name="NH3", donor_site="any"),
     "vinyl": ToolSpec(id="vinyl", saturated_name="C2H4", donor_site="any"),
+    # Handle-mounted ethynyl: the same C#C tip on an adamantyl frame — the
+    # first tool shaped like something a positional machine could hold. The
+    # acetylenic H is the only primary-classified H (see chemistry.species).
+    # Null hypothesis to test: the handle leaves tip chemistry unchanged
+    # (anchor vs methane should reproduce free ethynyl's -26).
+    "ethynyl-ada": ToolSpec(
+        id="ethynyl-ada", saturated_name="ethynyl-adamantane", donor_site="primary"
+    ),
 }
 
 # Hydrogenated workpieces, cheap -> realistic (the M0 "workpiece ladder").

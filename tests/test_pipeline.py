@@ -292,3 +292,38 @@ def test_rank_unevaluated_orders_by_predicted_favorability():
     # best predictable proposal would be t1 on w2... but that's evaluated;
     # nothing predictable remains except pairs with unseen factors
     assert ids  # non-empty: the frontier is never silently empty
+
+
+def test_ethynyl_adamantane_geometry():
+    """Handle-mounted tool: C12H16, tip H is the unique primary-classified H,
+    alkyne bond lengths correct, no clashes."""
+    import numpy as np
+
+    from cheiron.chemistry.species import saturated
+    from cheiron.geometry import bond_graph, carbon_substitution, hydrogen_indices
+
+    atoms = saturated("ethynyl-adamantane")
+    symbols = atoms.get_chemical_symbols()
+    assert symbols.count("C") == 12 and symbols.count("H") == 16
+
+    graph = bond_graph(atoms)
+    primary_h = [h for h in hydrogen_indices(atoms)
+                 if carbon_substitution(atoms, h, graph) == 1]
+    assert len(primary_h) == 1  # the acetylenic tip, and only it
+    tip_h = primary_h[0]
+    tip_c = graph[tip_h][0]
+    other_c = [n for n in graph[tip_c] if symbols[n] == "C"]
+    assert len(other_c) == 1  # sp carbon: one C neighbour
+    positions = atoms.get_positions()
+    triple = float(np.linalg.norm(positions[tip_c] - positions[other_c[0]]))
+    assert abs(triple - 1.20) < 0.02
+    assert not has_clash(atoms)
+
+
+def test_handle_tool_builds_with_tip_donor():
+    built = build(_spec("ethynyl-ada", "methane"))
+    assert built.tool_saturated.spin == 0
+    assert built.tool_radical.spin == 1
+    # the radical lost the tip H: still 12 C, 15 H
+    symbols = built.tool_radical.atoms.get_chemical_symbols()
+    assert symbols.count("C") == 12 and symbols.count("H") == 15

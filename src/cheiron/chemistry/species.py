@@ -53,8 +53,47 @@ def _build_adamantane() -> Atoms:
     return Atoms(symbols=symbols, positions=positions)
 
 
+CC_SP3_SP = 1.47   # C(sp3)-C(sp) single bond, Angstrom
+CC_TRIPLE = 1.20   # C#C triple bond
+CH_SP = 1.066      # acetylenic C-H
+
+
+def _build_ethynyl_adamantane() -> Atoms:
+    """1-ethynyladamantane (C12H16): an ethynyl tip on a diamondoid handle.
+
+    The first *handle-mounted* tool — real mechanosynthesis tooltips are
+    moieties on rigid frames a positioning machine can hold, not free
+    radicals. Built by replacing one bridgehead hydrogen of the lattice-carved
+    adamantane with a collinear C#C-H group. The acetylenic tip hydrogen is
+    the only 'primary'-classified H in the molecule (its carbon has exactly
+    one carbon neighbour), so donor_site='primary' selects the tip.
+    """
+    atoms = _build_adamantane()
+    graph = bond_graph(atoms)
+    tip_h = next(
+        i for i in hydrogen_indices(atoms) if carbon_substitution(atoms, i, graph) == 3
+    )
+    parent = graph[tip_h][0]
+    positions = atoms.get_positions()
+    direction = positions[tip_h] - positions[parent]
+    direction /= np.linalg.norm(direction)
+    base = positions[parent].copy()
+
+    del atoms[tip_h]
+    for symbol, dist in (
+        ("C", CC_SP3_SP),
+        ("C", CC_SP3_SP + CC_TRIPLE),
+        ("H", CC_SP3_SP + CC_TRIPLE + CH_SP),
+    ):
+        atoms += Atoms(symbol, positions=[base + direction * dist])
+    return atoms
+
+
 # Molecules the arbiter needs that ASE's G2 collection does not provide.
-CUSTOM_MOLECULES = {"adamantane": _build_adamantane}
+CUSTOM_MOLECULES = {
+    "adamantane": _build_adamantane,
+    "ethynyl-adamantane": _build_ethynyl_adamantane,
+}
 
 
 def saturated(name: str) -> Atoms:
