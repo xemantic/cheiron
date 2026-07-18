@@ -10,6 +10,31 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — First selectivity measurement: tertiary over secondary by 1.1 kcal/mol
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+`habs-ethynyl-adamantane-2h` (the cage's CH2 site): **ΔE = −34.1 kcal/mol**
+(UKS/PBE/def2-SVP, df, opt; 1869 s — the 2-adamantyl radical optimizes slowly).
+With the tertiary result (−35.2), `cheiron.selectivity` produces the project's
+first site-preference measurement:
+
+> ethynyl on adamantane: prefers **tertiary** by **1.1 kcal/mol** (ΔΔE).
+
+The margin is small, as the literature says it should be — adamantane
+abstraction is only weakly tertiary-selective, because cage rigidity claws
+back most of the usual tertiary advantage (the −13.7 kcal/mol
+isobutane-tertiary offset collapses to −9.0 here, and the secondary site sits
+only 1.1 above that). Implication for M2: at ΔΔE ≈ 1 kcal/mol, thermodynamic
+preference alone gives roughly a 6:1 ratio at room temperature — *chemical*
+selectivity won't reliably pick one site on a diamond-like surface. Site
+discrimination will have to come from **positional control and approach
+geometry**, which is of course the project's whole premise; the loop has now
+measured, rather than assumed, why that premise is necessary.
+
+Pending: methyl+adamantane-2h completes the comparison for the weak tool;
+then surface the selectivity table in the published summary.
+
 ## 2026-07-17 — Grid complete at 14/14; additivity prediction lands exact
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
