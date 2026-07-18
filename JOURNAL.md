@@ -10,6 +10,19 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — N-family slope at hybrid grade: ordinary BEP (0.43); oxygen stays the outlier
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+While waiting out the host's memory squeeze (the 44-atom steric scan remains
+parked), a measurement that fits: **amino+ethane at PBE0 — barrier 6.06
+kcal/mol** (3 points, 269 s), vs amino+methane's 8.37. That gives the
+N-family its first hybrid-grade barrier–ΔE slope: ≈0.43 over the 5.4
+kcal/mol of extra driving force — ordinary Brønsted–Evans–Polanyi behavior,
+right in the classic range, and within the band predicted by assuming
+C-family-like kinetics. The picture holds: **C and N families follow normal
+BEP lines; oxygen alone undercuts them.**
+
 ## 2026-07-18 — Handle-tool term verified twice; remaining ladder ceded to the model
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
