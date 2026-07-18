@@ -10,6 +10,25 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Handle-tool term verified twice; remaining ladder ceded to the model
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+`habs-ethynyl-ada-ethane`: **−30.8** vs predicted −30.9 (survival-mode QM:
+1 thread, 900 MB cap, 29 min — the shared host is under heavy neighbor load
+and this recipe is now the proven fallback). With the handle tool's additive
+term pinned by two independent workpieces, the six remaining ladder entries
+are Hess-law bookkeeping. **Decision: the loop stops measuring them.**
+Predicted values (kcal/mol): propane −35.3, butane −35.0, cyclobutane −34.2,
+isobutane −39.1, adamantane −34.4, adamantane-2h −33.2 — published here as
+predictions, clearly labeled, never entering the ledger as measurements.
+QM time belongs to questions additivity cannot answer.
+
+The open question for this tool is **steric**: does the bulky adamantyl
+frame change the *approach* on a crowded site (clamped scan, 44-atom
+supersystem)? That needs a memory window the host currently can't give
+(~2 GB available, neighbors at ~4 GB). It runs when the window opens.
+
 ## 2026-07-18 — The handle doesn't spoil the tip: ethynyl-adamantyl at −25.4
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
