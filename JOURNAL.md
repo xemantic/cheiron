@@ -10,6 +10,39 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Hybrid-grade kinetic map: the lone-pair advantage is oxygen's alone
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The PBE0 anchors landed, and the flagged number moved exactly as feared —
+**amino: 2.4 → 8.37 kcal/mol** (×3.5). The completed map (vs methane,
+def2-SVP; literature activation energies for orientation):
+
+| tool | ΔE | Ea PBE | Ea PBE0 | Ea literature |
+|------|---:|---:|---:|---:|
+| ethynyl | −26.2 | 0.0 | — | ≈0 (fast at 25 K) |
+| hydroxyl | −10.2 | 0.0 | **1.8** | ≈1.7 |
+| vinyl | −3.1 | 4.9 | **6.7** | ≈6–8 |
+| amino | −1.2 | 2.4 | **8.4** | ≈10 |
+| methyl | 0.0 | 8.2 | **10.6** | ≈14 |
+
+Conclusions, hybrid-grade:
+
+1. **The nitrogen "advantage" was PBE's self-interaction artifact.** At PBE0
+   amino sits essentially on the C-radical barrier–ΔE line. The story
+   simplifies: **only oxygen genuinely undercuts the line** (~3 kcal/mol
+   below a C-tool at matched ΔE) — an electronegativity-driven polar-TS
+   effect, not a generic lone-pair one.
+2. **PBE0//def2-SVP tracks experiment across the whole map** (worst case
+   methyl, still ~3.4 low). For a screening loop this is more than good
+   enough to rank; the PBE-screens/PBE0-confirms protocol is validated on
+   four independent chemistries.
+3. Design input for SELECT, final form: among these tools, ethynyl is
+   unmatched (barrierless AND most exothermic); hydroxyl is the best
+   *mild* tool (small barrier at moderate driving force); methyl/amino/vinyl
+   are kinetically expensive. Barrier rankings must be measured per family —
+   and now they are.
+
 ## 2026-07-18 — Five-tool kinetic map complete at PBE; lone-pair tools sit below the C-radical line
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

@@ -32,8 +32,8 @@ fragments; feasible gate at 15 kcal/mol. '—' = not yet scanned.
 | habs-methyl-cyclobutane | methyl | cyclobutane | secondary | -8.8 | yes | — | — |
 | habs-methyl-adamantane-2h | methyl | adamantane-2h | secondary | -7.8 | yes | — | — |
 | habs-methyl-ethane | methyl | ethane | primary | -5.4 | yes | 4.7 | yes |
-| habs-vinyl-methane | vinyl | methane | any | -3.1 | yes | 4.9 | yes |
-| habs-amino-methane | amino | methane | any | -1.2 | yes | 2.4 | yes |
+| habs-vinyl-methane | vinyl | methane | any | -3.1 | yes | 6.7 | yes |
+| habs-amino-methane | amino | methane | any | -1.2 | yes | 8.4 | yes |
 | habs-methyl-methane | methyl | methane | any | +0.0 | no | 10.6 | yes |
 
 ## Site selectivity (M2, thermodynamic)
