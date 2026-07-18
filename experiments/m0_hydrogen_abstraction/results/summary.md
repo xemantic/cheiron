@@ -32,7 +32,7 @@ fragments; feasible gate at 15 kcal/mol. '—' = not yet scanned.
 | habs-hydroxyl-cyclobutane | hydroxyl | cyclobutane | secondary | -19.1 | yes | — | — |
 | habs-hydroxyl-adamantane-2h | hydroxyl | adamantane-2h | secondary | -18.0 | yes | — | — |
 | habs-vinyl-isobutane | vinyl | isobutane | tertiary | -16.7 | yes | — | — |
-| habs-hydroxyl-ethane | hydroxyl | ethane | primary | -15.7 | yes | — | — |
+| habs-hydroxyl-ethane | hydroxyl | ethane | primary | -15.7 | yes | 0.0 (PBE0) | yes |
 | habs-amino-isobutane | amino | isobutane | tertiary | -14.8 | yes | — | — |
 | habs-methyl-isobutane | methyl | isobutane | tertiary | -13.6 | yes | 2.6 | yes |
 | habs-vinyl-propane | vinyl | propane | secondary | -13.0 | yes | — | — |
@@ -42,7 +42,7 @@ fragments; feasible gate at 15 kcal/mol. '—' = not yet scanned.
 | habs-amino-propane | amino | propane | secondary | -11.1 | yes | — | — |
 | habs-vinyl-adamantane-2h | vinyl | adamantane-2h | secondary | -11.0 | yes | — | — |
 | habs-amino-butane | amino | butane | secondary | -10.8 | yes | — | — |
-| habs-hydroxyl-methane | hydroxyl | methane | any | -10.2 | yes | 1.8 | yes |
+| habs-hydroxyl-methane | hydroxyl | methane | any | -10.2 | yes | 1.8 (PBE0) | yes |
 | habs-amino-adamantane | amino | adamantane | tertiary | -10.1 | yes | — | — |
 | habs-amino-cyclobutane | amino | cyclobutane | secondary | -10.0 | yes | — | — |
 | habs-methyl-propane | methyl | propane | secondary | -9.9 | yes | 3.7 | yes |
@@ -52,11 +52,11 @@ fragments; feasible gate at 15 kcal/mol. '—' = not yet scanned.
 | habs-methyl-cyclobutane | methyl | cyclobutane | secondary | -8.8 | yes | — | — |
 | habs-vinyl-ethane | vinyl | ethane | primary | -8.6 | yes | — | — |
 | habs-methyl-adamantane-2h | methyl | adamantane-2h | secondary | -7.8 | yes | — | — |
-| habs-amino-ethane | amino | ethane | primary | -6.6 | yes | — | — |
+| habs-amino-ethane | amino | ethane | primary | -6.6 | yes | 6.1 (PBE0) | yes |
 | habs-methyl-ethane | methyl | ethane | primary | -5.4 | yes | 4.7 | yes |
-| habs-vinyl-methane | vinyl | methane | any | -3.1 | yes | 6.7 | yes |
-| habs-amino-methane | amino | methane | any | -1.2 | yes | 8.4 | yes |
-| habs-methyl-methane | methyl | methane | any | +0.0 | no | 10.6 | yes |
+| habs-vinyl-methane | vinyl | methane | any | -3.1 | yes | 6.7 (PBE0) | yes |
+| habs-amino-methane | amino | methane | any | -1.2 | yes | 8.4 (PBE0) | yes |
+| habs-methyl-methane | methyl | methane | any | +0.0 | no | 10.6 (PBE0) | yes |
 
 ## Site selectivity (M2, thermodynamic)
 

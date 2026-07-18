@@ -37,7 +37,10 @@ def load_barriers(scans_path: Path) -> dict[str, float]:
                 and r.get("ok")
                 and r.get("barrier_kcal") is not None
             ):
-                barriers[r["spec_id"]] = r["barrier_kcal"]
+                # annotate non-PBE barriers so mixed methods stay distinguishable
+                method = r.get("method", "")
+                tag = "" if "/PBE/" in method else " (" + method.split("/")[1] + ")"
+                barriers[r["spec_id"]] = (r["barrier_kcal"], tag)
     return barriers
 
 
@@ -82,8 +85,9 @@ def build_summary(ledger_path: Path) -> str:
     ]
     for r in usable:
         spec, fit = r["spec"], r["fitness"]
-        barrier = barriers.get(spec["id"])
-        barrier_cell = "—" if barrier is None else f"{barrier:.1f}"
+        entry = barriers.get(spec["id"])
+        barrier = None if entry is None else entry[0]
+        barrier_cell = "—" if entry is None else f"{barrier:.1f}{entry[1]}"
         feasible_cell = (
             "—" if barrier is None
             else ("yes" if barrier <= FEASIBLE_BARRIER_KCAL else "no")
