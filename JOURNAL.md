@@ -10,6 +10,25 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Hardware boundary measured: 44 atoms needs ~4 GB this host can't give
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The handle-steric scan (ethynyl-adamantyl tip vs the cage's secondary site,
+44-atom clamped supersystem) was attempted three times, down to the most
+conservative settings this stack allows (1 thread, 900 MB PySCF cap,
+cross-spec ledger reference so the job is *only* the one constrained
+optimization). All three: SIGKILL during the first SCF. Together with the
+successes at 28 atoms under the same settings, that brackets the requirement:
+**≥28 atoms fits in ~2 GB free; 44 atoms needs roughly 4 GB free**, which
+this host — sharing 7.7 GB with ~4 GB of neighbor JVM daemons — does not
+reliably have. The loop stops attempting until free memory ≥3.5 GB
+(cheap check each wakeup) and the question stays on the books: it is the
+first measurement where the *tool's handle*, not its tip, is the subject.
+
+(For the record, the failed attempts validated the new cross-spec reference
+path in production: the job now reaches the optimizer in seconds.)
+
 ## 2026-07-18 — C-family curvature confirmed at hybrid grade; small-system kinetics wrapped
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
