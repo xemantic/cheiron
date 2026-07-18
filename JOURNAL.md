@@ -21,7 +21,10 @@ N-family its first hybrid-grade barrier–ΔE slope: ≈0.43 over the 5.4
 kcal/mol of extra driving force — ordinary Brønsted–Evans–Polanyi behavior,
 right in the classic range, and within the band predicted by assuming
 C-family-like kinetics. The picture holds: **C and N families follow normal
-BEP lines; oxygen alone undercuts them.**
+BEP lines; oxygen alone undercuts them.** (Addendum, same day: the companion
+measurement — hydroxyl+ethane at PBE0, 3 points, 234 s — is **barrierless**,
+exactly as the outlier picture predicts; the oxygen claim is now two-point
+solid at hybrid grade.)
 
 ## 2026-07-18 — Handle-tool term verified twice; remaining ladder ceded to the model
 
