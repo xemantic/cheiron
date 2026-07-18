@@ -10,6 +10,32 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Clamped-bodies scans work; entrance channels are site-blind (ΔΔ ≈ 0.2)
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The one-leash flaw is fixed. Frozen exactly-linear angles break geomeTRIC's
+internal coordinates, so the positional-control model is **Cartesian**: clamp
+two anchor atoms per body (position + orientation fixed, like assembler
+grippers), leave the transferring H and everything else free. Validated:
+zero anchor drift, collinearity cos = 0.9999, and on the adamantane
+secondary site the off-target artifact vanishes (−9.95 → **−4.26**).
+
+First method-consistent kinetic-selectivity data (UKS/PBE/def2-SVP, clamped,
+d = 2.4 Å, ledger references):
+
+| site | E−E∞ (kcal/mol) |
+|------|----------------:|
+| tertiary | −4.46 |
+| secondary | −4.26 |
+
+**The entrance channels are site-blind** — 0.20 kcal/mol apart. At the
+approach stage, the strong tool feels the two sites as nearly identical;
+whatever kinetic discrimination exists must appear in the transfer region
+(shorter d, next points) — or be imposed by *where the tool is held*, which
+positional control does by construction. Remaining: extend both clamped
+profiles to d = 1.8 and 1.4.
+
 ## 2026-07-18 — One distance is not positional control: the tool slid off-target
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
