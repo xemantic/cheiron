@@ -10,6 +10,36 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Clarification: the ΔE additivity is Hess's law, not a discovery. Barriers are the real search space.
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+A correction of emphasis the record deserves. For single hydrogen
+abstraction, ΔE(t, w) = BDE(w–H) − BDE(t–H) *identically* — reactants and
+products are the same four fragments, so the additive decomposition is
+guaranteed by Hess's law, not discovered by the loop. The 0.000 training
+residual and the −15.7/−15.7 verification are therefore **consistency checks
+of the pipeline** (valuable: they certify that every optimization converges
+to the same fragment energies across candidates) — but they carry no new
+chemistry. The earlier entries' excitement about "rediscovered additivity"
+stands corrected: rediscovering a thermodynamic identity is quality control,
+not science.
+
+What is *not* guaranteed by any identity, and where M3's search genuinely
+lives:
+
+- **Barriers.** The methyl series already shows curvature vs ΔE (local BEP
+  slopes 0.64 → 0.26). Whether hydroxyl/vinyl/amino fall on the same
+  barrier–ΔE relation or each tool family has its own is an open, measurable
+  question — polar effects in the TS (electronegative O attacking C–H) are
+  exactly the physics ΔE cannot see.
+- **Steric/positional effects** (the M2 axis): clamp geometry, approach
+  angle, crowding — none additive, all decisive for assembly.
+
+Next: relaxed barrier scans for the three new tools vs methane, starting
+with hydroxyl — the polar-TS case where deviation from the methyl-family
+BEP is most likely.
+
 ## 2026-07-18 — M3 loop closes: predicted −15.7, measured −15.7
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
