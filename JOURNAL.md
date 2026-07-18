@@ -10,6 +10,22 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Operational failure: OOM kill on a shared host; PySCF memory now capped
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The methyl+adamantane-2h evaluation was **SIGKILLed (exit 137)** mid-
+optimization: the bootstrap host has 7 GB RAM shared with unrelated JVM/Gradle
+build daemons (~4 GB), and PySCF's default 4 GB working-memory assumption
+didn't fit. The append-only ledger took no damage — the killed run simply
+never appended, which is exactly how that design is supposed to fail.
+
+Fix: `ArbiterConfig.max_memory_mb = 2000`, passed to every `gto.M` call
+(arbiter + both scan paths). Capped, PySCF switches to disk/batched integral
+algorithms instead of dying — slower beats dead. The candidate is being
+re-evaluated with the cap in place. (Not touched: the other project's build
+daemons — not this loop's to kill.)
+
 ## 2026-07-18 — First selectivity measurement: tertiary over secondary by 1.1 kcal/mol
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

@@ -32,6 +32,11 @@ class ArbiterConfig:
     optimize_geometry: bool = True
     max_opt_steps: int = 50
     scf_conv_tol: float = 1e-8
+    # Hard cap for PySCF working memory. The bootstrap host has 7 GB shared
+    # with other workloads; PySCF's 4 GB default got the adamantane evaluation
+    # OOM-killed (exit 137). Capped, PySCF switches to disk/batched algorithms
+    # instead of dying — slower beats dead.
+    max_memory_mb: int = 2000
 
     def method_string(self) -> str:
         tag = "df" if self.use_density_fitting else "no-df"
@@ -105,6 +110,7 @@ def evaluate_species(species: Species, config: ArbiterConfig) -> SpeciesResult:
             spin=species.spin,       # n_alpha - n_beta = unpaired electrons
             charge=species.charge,
             verbose=0,
+            max_memory=config.max_memory_mb,
         )
 
         def make_mf(m):

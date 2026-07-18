@@ -208,6 +208,7 @@ def _single_point(atoms: Atoms, spin: int, config: ArbiterConfig) -> tuple[float
             spin=spin,
             charge=0,
             verbose=0,
+            max_memory=config.max_memory_mb,
         )
         mf = dft.UKS(mol)
         mf.xc = config.functional
@@ -255,6 +256,7 @@ def _constrained_optimize(
             spin=spin,
             charge=0,
             verbose=0,
+            max_memory=config.max_memory_mb,
         )
 
         def make_mf(m):
