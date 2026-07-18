@@ -10,6 +10,23 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — The mild tool works on the surface model: hydroxyl+adamantane barrierless at PBE
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+`habs-hydroxyl-adamantane` (tertiary site): **ΔE = −19.2 kcal/mol**, exactly
+the Hess-law bookkeeping value. Clamped approach scan (PBE screen, ledger
+reference): −2.3 @2.4 Å → −8.0 @1.8 (mid-transfer) — **barrier 0.0 at PBE**.
+Applying the measured hydroxyl-family PBE0 shift (+1.8 at methane, shrinking
+with driving force): hybrid estimate **≲1.5 kcal/mol**; a full PBE0
+confirmation on the cage is queued but not decision-blocking.
+
+Datasheet line: on a diamondoid tertiary site, the hydroxyl radical is a
+*mild, fast* abstraction tool — moderate driving force (−19), near-zero
+barrier, and (like ethynyl) site-selective only through positional control.
+Next iteration consolidates the characterized steps into the project's first
+**step datasheet** document (criterion S2).
+
 ## 2026-07-18 — Hybrid-grade kinetic map: the lone-pair advantage is oxygen's alone
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
