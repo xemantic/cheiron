@@ -10,6 +10,29 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — Grid complete: 40/40, every prediction within 0.1 kcal/mol
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The full 5-tool × 8-workpiece favorability grid is measured: **40 distinct
+candidates, 39 favorable, 1 unfavorable** (the methyl+methane thermoneutral
+control), **zero unresolved failures** across the whole campaign. The
+anchor-then-predict protocol held perfectly: after each new tool's single
+methane measurement, all 21 subsequently measured candidates matched their
+additive predictions within 0.1 kcal/mol — Hess-law bookkeeping, as expected,
+but 21-for-21 is also a clean bill of health for the pipeline's convergence
+discipline (a single sloppy optimization anywhere would have broken the
+pattern, as it did twice earlier before being caught and fixed).
+
+The favorability axis of this reaction family is now, for practical
+purposes, *solved and closed*: one number per tool, one per workpiece,
+arbitrary combinations predictable. Open axes remain kinetics (per-family
+barrier relations — measured for all five tools vs methane, only spot-
+measured elsewhere), positional/steric effects (clamped scans exist for
+ethynyl and hydroxyl on adamantane), and everything beyond this reaction
+family (M3's real horizon: new operations, bigger cages, tools with
+handles a positional machine could actually hold).
+
 ## 2026-07-18 — First step datasheet published (S2): H-abstraction from adamantane
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
