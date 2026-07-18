@@ -327,3 +327,41 @@ def test_handle_tool_builds_with_tip_donor():
     # the radical lost the tip H: still 12 C, 15 H
     symbols = built.tool_radical.atoms.get_chemical_symbols()
     assert symbols.count("C") == 12 and symbols.count("H") == 15
+
+
+def test_fragment_reference_by_parts_crosses_specs(tmp_path):
+    import json
+
+    from cheiron.ledger import Ledger
+
+    method = "UKS/PBE/def2-SVP (df, opt)"
+    r1 = {
+        "spec": {"id": "habs-t1-w1",
+                 "tool": {"id": "t1"},
+                 "workpiece": {"saturated_name": "W1", "abstract_site": "any"}},
+        "build": {"ok": True},
+        "measurement": {"method": method, "species": [
+            {"role": "tool_radical", "energy_hartree": -10.0, "converged": True},
+            {"role": "workpiece", "energy_hartree": -20.0, "converged": True},
+        ]},
+        "fitness": None, "status": "evaluated",
+    }
+    r2 = {
+        "spec": {"id": "habs-t2-w2",
+                 "tool": {"id": "t2"},
+                 "workpiece": {"saturated_name": "W2", "abstract_site": "tertiary"}},
+        "build": {"ok": True},
+        "measurement": {"method": method, "species": [
+            {"role": "tool_radical", "energy_hartree": -30.0, "converged": True},
+            {"role": "workpiece", "energy_hartree": -40.0, "converged": True},
+        ]},
+        "fitness": None, "status": "evaluated",
+    }
+    path = tmp_path / "ledger.jsonl"
+    path.write_text(json.dumps(r1) + "\n" + json.dumps(r2) + "\n")
+    ledger = Ledger(path)
+
+    # the (t1, W2) pair was never evaluated together, but both fragments exist
+    assert ledger.fragment_reference_by_parts("t1", "W2", method) == -10.0 + -40.0
+    assert ledger.fragment_reference_by_parts("t1", "W-missing", method) is None
+    assert ledger.fragment_reference_by_parts("t1", "W2", "other-method") is None

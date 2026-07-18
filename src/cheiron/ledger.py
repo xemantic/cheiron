@@ -85,3 +85,36 @@ class Ledger:
         if "tool_radical" not in energies or "workpiece" not in energies:
             return None
         return energies["tool_radical"] + energies["workpiece"]
+
+    def fragment_reference_by_parts(
+        self, tool_id: str, workpiece_saturated_name: str, method: str
+    ) -> float | None:
+        """Cross-spec fragment reference: E(tool_radical) + E(workpiece) taken
+        from *any* usable records sharing the tool / the workpiece molecule.
+
+        A tool radical's energy depends only on the tool; a saturated
+        workpiece's only on the molecule (not on which site a spec targets).
+        So a pair never evaluated together can still get a ledger-consistent
+        reference from records where each fragment appeared separately —
+        which spares re-optimizing a 28-atom tool for hours on a loaded host.
+        """
+        tool_energy = workpiece_energy = None
+        for record in self.latest_by_spec().values():
+            measurement = record.get("measurement") or {}
+            if measurement.get("method") != method:
+                continue
+            spec = record.get("spec", {})
+            for s in measurement.get("species", []):
+                if not (s.get("converged") and s.get("energy_hartree") is not None):
+                    continue
+                if s["role"] == "tool_radical" and spec.get("tool", {}).get("id") == tool_id:
+                    tool_energy = s["energy_hartree"]
+                if (
+                    s["role"] == "workpiece"
+                    and spec.get("workpiece", {}).get("saturated_name")
+                    == workpiece_saturated_name
+                ):
+                    workpiece_energy = s["energy_hartree"]
+        if tool_energy is None or workpiece_energy is None:
+            return None
+        return tool_energy + workpiece_energy

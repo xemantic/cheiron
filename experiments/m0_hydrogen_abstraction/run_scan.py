@@ -83,6 +83,10 @@ def main() -> int:
         ).method_string()
         ledger = Ledger(Path(__file__).parent / "results" / "ledger.jsonl")
         reference = ledger.fragment_reference(spec.id, opt_method)
+        if reference is None:
+            reference = ledger.fragment_reference_by_parts(
+                spec.tool.id, spec.workpiece.saturated_name, opt_method
+            )
         print(f"fragment reference: {'ledger (' + opt_method + ')' if reference is not None else 'recomputing'}")
         scan = relaxed_scan(
             spec,
