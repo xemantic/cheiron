@@ -10,6 +10,27 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — M3 first anchor: hydroxyl measured once, its ladder predicted whole
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+M3's search machinery is live. The tool space grew to five abstractors
+(ethynyl, methyl + new hydroxyl, amino, vinyl), and `cheiron.predict` fits
+the additive ΔE model from the ledger (worst residual over 17 records:
+0.000 kcal/mol) and ranks the unevaluated frontier, anchors first.
+
+First anchor: `habs-hydroxyl-methane` **ΔE = −10.2 kcal/mol** (30 s). Honest
+gap: experimental BDEs (CH4 105, H2O 119) suggest ≈ −14; PBE gives −10.2 —
+GGA underbinds O–H relative to C–H, so hydroxyl's whole PBE ladder will read
+~4 kcal/mol weak. Noted next to the numbers, as always.
+
+That one measurement pinned seven predictions (kcal/mol): isobutane −23.8,
+propane −20.1, butane −19.8, adamantane −19.2, cyclobutane −19.1,
+adamantane-2h −18.0, ethane −15.7. Next: anchors for amino and vinyl, then
+one *verification* measurement against a hydroxyl prediction — the model
+earns trust by being tested where it claims to know, and every hit or miss
+gets published (criterion S3).
+
 ## 2026-07-18 — PBE0 spot-check done — and a root-cause correction owed to the record
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
