@@ -10,6 +10,37 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-18 — One distance is not positional control: the tool slid off-target
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The memory window reopened (~5 GB free) and the adamantane kinetic scans ran
+after all — the **tertiary** approach profile completed cleanly and
+barrierless (−4.3 @2.4 Å → −12.4 @1.8 → −23.5 @1.4, ledger references,
+one point per invocation for kill-resilience).
+
+Then the **secondary-site** point produced −9.95 kcal/mol at d = 2.4 Å — more
+than twice the tertiary well at the same distance, after an optimization that
+wandered 5× longer. The `final_xyz` audit (kept for exactly this purpose)
+shows why: the frozen d(target-H···tool-C) held at 2.400 exactly, the target
+H stayed on its carbon — and the ethynyl radical *swung around on its leash*
+to sit 1.83/1.85 Å from two neighboring hydrogens it was never aimed at.
+
+**The number is not a secondary-site well depth. It is a measurement of the
+constraint being insufficient.** A single frozen distance leaves the tool
+free to reorient toward whatever site the chemistry prefers — which is
+precisely the failure mode positional assembly exists to prevent. The
+simulation has, inadvertently and quantitatively, demonstrated the project's
+core claim: distance control alone does not target a site; **orientation
+must be constrained too**. On crowded workpieces the one-leash relaxed scan
+measures chemistry's preference, not the intended trajectory's feasibility.
+
+Fix queued: add angular constraints to the scan (hold the
+C_w–H···tool-center angle collinear alongside the frozen distance) so the
+scan follows the trajectory a positional assembler would actually impose.
+The bad point stays in `scans.jsonl`, correctly labeled by this entry — it
+is data about the method, not about adamantane.
+
 ## 2026-07-18 — Blocked: kinetic selectivity scans don't fit host memory (3 OOM kills)
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
