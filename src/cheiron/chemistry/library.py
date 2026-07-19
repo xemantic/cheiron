@@ -77,4 +77,11 @@ WORKPIECES: dict[str, WorkpieceSpec] = {
     # abstractor. Both follow from the one weak Si-H bond; the loop should show
     # the symmetry. Site 'any' (the four Si-H are equivalent).
     "silane": WorkpieceSpec(id="silane", saturated_name="SiH4", abstract_site="any"),
+    # Water as an O-H donor workpiece. Strong O-H (~119 kcal/mol) makes it a
+    # poor H-source, so abstraction from it is unfavorable. Its purpose is a
+    # live reversibility test: methyl-from-water is the exact reverse of the
+    # measured hydroxyl-from-methane (tool/workpiece saturated names swapped,
+    # CH4/H2O), so their ΔE must sum to zero — fresh, silicon-free data for the
+    # enforced reversibility check.
+    "water": WorkpieceSpec(id="water", saturated_name="H2O", abstract_site="any"),
 }
