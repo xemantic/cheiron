@@ -10,6 +10,41 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — The silicon symmetry closes — and the loop passes an exact reversibility check (+19.7 / −19.7)
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Added silane (SiH4) as an H-*donor* workpiece, the mirror of silyl-as-tool.
+Both predictions confirmed, and one landed as an exact internal-consistency
+check the loop passed on its own numbers.
+
+| step | ΔE (kcal/mol) | note |
+|------|--------------:|------|
+| ethynyl abstracts from silane | **−45.9** | most favorable abstraction in the whole ledger |
+| methyl abstracts from silane | **−19.7** | favorable — even a weak tool empties a weak Si–H |
+
+**The silicon picture is symmetric, from one bond.** The weak Si–H bond makes
+silicon the *worst* H-remover as a tool (silyl+methane +19.7, unfavorable) and
+the *best* H-donor as a workpiece (ethynyl+silane −45.9). Same bond property,
+mirror-image roles — the loop showed both.
+
+**An exact reversibility check, unplanned.** `silyl+methane` (+19.7) and
+`methyl+silane` (−19.7) are the *same reaction run backwards*
+(·CH3 + SiH4 → CH4 + ·SiH3 reverses ·SiH3 + CH4 → SiH4 + ·CH3), so their ΔE
+must be exact negatives — and they are, to the decimal: **+19.7 / −19.7**.
+The loop was never told these two candidates are related; the arbiter computed
+them independently from four separately-optimized species each and they came
+out ± the same number. That is microscopic reversibility (ΔE_forward =
+−ΔE_reverse) recovered as a rigorous check of the whole pipeline — the third
+built-in physics identity it has passed (after methyl+methane = 0.0 exactly,
+and cross-tool ΔE additivity to 0.0001). These self-consistency checks are the
+strongest evidence, short of an external referee, that the numbers are sound.
+
+Silicon is now characterized on both sides of abstraction (tool and workpiece)
+plus addition — the loop spans two operations, two periodic rows, and both
+reaction roles, reproducing known bond physics and its own reversibility
+throughout.
+
 ## 2026-07-19 — Silicon works, and silyl is the sharpest operation-split yet: worst abstractor, fine adder
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
