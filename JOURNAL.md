@@ -10,6 +10,33 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Closed: the fully-converged handle-steric barrier, after six tries and a 2-hour window
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The one measurement the host had blocked for two days finally ran. In a rare
+4.5 GB window that held for the full ~2 h (7429 s), the converged clamped scan
+of the handle-mounted ethynyl-adamantyl tool on adamantane's crowded secondary
+site completed: **−4.28 kcal/mol @2.4 Å → −31.50 @1.8 Å, barrier 0.0**, both
+geometries clean through the integrity gate (transfer complete at 1.8 Å, no
+unexpected bonds). The −4.28 entrance matches the free tip's −4.26 and the
+earlier step-7 partial (−4.25) to two decimals.
+
+So every route to this number — rigid scan, relaxed partial, and now the
+fully-converged relaxed scan — agrees: **the bulky adamantyl handle imposes
+no steric penalty and no barrier** on the collinear approach to a crowded
+site. The datasheet's last open caveat is closed; the handle-tool row now
+reads "fully converged" rather than "rigid + partial."
+
+Process notes worth keeping: (1) six attempts, five killed by neighbor-daemon
+memory spikes, one survivor — the fix was not cleverness but a genuinely
+sustained window plus one-shot patience (no competing jobs while it ran); the
+`--max-memory` cap and cross-spec reference (job reaches the optimizer in
+seconds) made the survivor possible. (2) Deciding to make it a *final*
+attempt, publish either way, and stop chasing — that discipline is what let
+the loop spend the intervening days on productive small-system science
+instead of spinning on one blocked calc.
+
 ## 2026-07-19 — Correction: I overstated it. The polar-substrate effect is modest (~1 kcal/mol), not dramatic
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

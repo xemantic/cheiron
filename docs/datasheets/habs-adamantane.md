@@ -25,7 +25,7 @@ collinear approach only.
 | ΔE, tertiary site | **−35.2** kcal/mol | **−19.2** kcal/mol | — |
 | ΔE, secondary site | −34.1 | −18.0 (Hess prediction) | −33.2 (Hess prediction) |
 | ΔE, methane reference | −26.2 | −10.2 | **−25.4** (handle costs 0.8 vs free tip) |
-| approach barrier (clamped, PBE) | **0.0** (transfer complete by 1.8 Å) | **0.0** (mid-transfer at 1.8 Å) | **0.0** rigid; relaxed partial matches free tip (−4.25 vs −4.26 @2.4 Å) |
+| approach barrier (clamped, PBE) | **0.0** (transfer complete by 1.8 Å) | **0.0** (mid-transfer at 1.8 Å) | **0.0** — fully converged (−4.28 @2.4, −31.50 @1.8; integrity-gate clean) |
 | hybrid barrier estimate | 0 (no plausible bias creates one) | ≲1.5 (family shift applied); PBE0 run queued | 0 (tip chemistry unchanged by frame) |
 | tool integrity | preserved (gate: all geometries pass) | preserved | preserved |
 | character | strong, hot | mild, fast | strong tip on a positionable frame |
@@ -36,8 +36,10 @@ thermodynamics (0.8 kcal/mol handle cost) and its approach to the *crowded*
 secondary site essentially unchanged (no steric wall along the collinear
 trajectory; entrance energy matches the free tip). Caveat: one collinear
 trajectory only; a bulkier frame or an off-axis site could still show steric
-cost. The fully-converged clamped barrier is the one number still blocked by
-host memory.
+cost. Confirmed by a fully-converged clamped scan (−4.28 @2.4 Å,
+−31.50 @1.8 Å, barrier 0.0, both geometries integrity-clean): the
+handle-mounted tool approaches and abstracts from the crowded secondary site
+with no barrier and no steric penalty on the collinear trajectory.
 
 ## Site selectivity — the headline
 
