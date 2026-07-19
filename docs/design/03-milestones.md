@@ -79,6 +79,33 @@ proposes, the arbiter disposes, and predicted-vs-measured deltas get published
 either way. PBE0 spot-check bounded the method bias (barriers are lower
 bounds, ≈ +2–3 kcal/mol at hybrid).
 
+## M4 — A second operation: radical addition · **in progress**
+
+Prove the loop is not hardwired to hydrogen abstraction by taking a
+*bond-forming* step — a radical adding across a C=C —
+`Tool· + alkene → Tool-CH2-CH2·` — through the same PROPOSE→BUILD→ARBITER→SCORE
+machinery and append-only-ledger discipline.
+
+Status: **the operation is live and validated.** `cheiron.addition` builds the
+three-species system (isolated from the abstraction pipeline, which stays
+green); `experiments/m1_radical_addition/run_addition.py` scores ΔE via the
+existing arbiter. Validated against known chemistry (methyl + ethylene −32.1
+vs literature electronic ΔE ≈ −28…−30; PBE overbinds a few kcal as it does for
+abstraction). Two findings the single-operation loop could not have produced:
+
+1. **Tool ranking is operation-dependent** — abstraction strength does *not*
+   predict addition strength (Spearman ρ ≈ 0.8, but methyl is the worst
+   abstractor and a solid adder; hydroxyl/vinyl swap). SELECT must rank tools
+   per operation.
+2. **Addition ΔE is *approximately* additive** (tool-difference
+   substrate-independent to ~0.7 kcal/mol across ethylene/propene) — but,
+   unlike abstraction's exact Hess-law additivity (0.0001 kcal/mol), it is
+   empirical and must be validated, not trusted.
+
+Remaining for M4: an approach-barrier adapter for the bond-forming coordinate
+(the M1 machinery is abstraction-shaped), a SCORE path, and anti-Markovnikov
+site selectivity on substituted alkenes.
+
 ## Cross-cutting: continuous operation
 
 Wire the harness to a scheduler so a batch runs, the ledger and journal update,
