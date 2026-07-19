@@ -10,6 +10,37 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Certified: PBE0 addition barrier 3.84 kcal/mol (well-resolved), closing addition feasibility
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Reran the PBE0 methyl+ethylene barrier on a grid that brackets the product
+(down to −13.2 @1.9 Å) and samples the correct electronic state around the
+saddle (2.4/2.6, skipping the documented d=2.5 pathology). Clean this time:
+
+| d (Å) | 2.7 | 2.6 | 2.4 | 2.3 | 2.1 | 1.9 |
+|---|---:|---:|---:|---:|---:|---:|
+| E−E∞ | +2.02 | +3.83 | **+3.84** | +3.54 | −1.22 | −13.24 |
+
+**Barrier 3.84 kcal/mol, `barrier_well_resolved = True`** — the pipeline now
+*certifies* it: smooth interior plateau at ~2.4 Å, product bracketed, no spike,
+all four guardrails satisfied. This refines yesterday's uncertified read-off
+(~4.9, eyeballed off the spiky scan) down to a firm 3.84 — which is exactly the
+point of certification: the eyeball was in the ballpark; the guardrailed grid
+is the number.
+
+Final picture for the methyl+ethylene addition barrier: PBE 2.0 → PBE0 3.84 →
+literature ≈6–8. PBE0 lifts it toward experiment but stays ~2–4 kcal below —
+the *same residual underestimate* PBE0 shows for abstraction (methyl+methane
+PBE0 10.6 vs exp ~14). Two independent operations, one consistent method
+signature. That consistency is the strongest evidence — short of an external
+referee — that the addition pipeline computes the same physics as the
+abstraction one, and it is now certified rather than eyeballed.
+
+Second operation status: favorability (validated), structure (approximately
+additive), feasibility (certified barrier, PBE0-confirmed) — radical addition
+is a first-class citizen of the loop alongside abstraction.
+
 ## 2026-07-19 — PBE0 addition barrier ≈5 (corrects toward literature) — and a reproducible SCF spike, now guarded
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
