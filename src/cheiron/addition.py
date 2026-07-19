@@ -1,0 +1,142 @@
+"""M4 (scaffold) — radical addition: a bond-*forming* operation.
+
+Every step so far transfers a hydrogen (abstraction). Positional assembly also
+needs steps that *build* structure — the canonical one being a radical adding
+across an unsaturated bond:
+
+    Tool·  +  H2C=CH2  ->  Tool-CH2-CH2·        (the β-carbon carries the radical)
+
+This is genuinely different chemistry from abstraction: a new C-C σ bond forms
+at the cost of the alkene π bond, and the reaction energy is
+``ΔE = E(adduct·) - E(Tool·) - E(alkene)`` — three species, not four.
+
+This module is the geometry-only first slice: it builds a sane *starting*
+adduct (the arbiter will relax it) and returns the three species with correct
+spins. It deliberately does **not** touch the shared abstraction builder or
+arbiter, so the existing pipeline stays green while the operation grows in
+test-backed pieces (next: an addition runner that scores ΔE).
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+import numpy as np
+from ase import Atoms
+
+from .builder import Species
+from .chemistry.species import (
+    pick_abstractable_hydrogen,
+    remove_hydrogen,
+    saturated,
+    unpaired_electrons,
+)
+from .geometry import bond_graph, has_clash
+from .spec import ToolSpec
+
+CC_ADD_BOND = 1.54  # forming C(tool-center)-C(alkene) single bond, Angstrom
+
+
+class AdditionBuildError(Exception):
+    """Raised when a radical-addition system cannot be built."""
+
+
+@dataclass
+class BuiltAddition:
+    """The three species of a radical addition, ready for the arbiter."""
+
+    spec_id: str
+    tool_radical: Species     # Tool·
+    substrate: Species        # the alkene (closed shell)
+    adduct_radical: Species   # Tool-CH2-CH2·
+
+    def species(self) -> list[Species]:
+        return [self.tool_radical, self.substrate, self.adduct_radical]
+
+
+def _alkene_double_bond(atoms: Atoms) -> tuple[int, int]:
+    """Return the two carbons of the (assumed single) C=C double bond.
+
+    Picked as the closest C-C pair — a double bond is shorter than any single
+    C-C — which is unambiguous for the small mono-alkene substrates here.
+    """
+    symbols = atoms.get_chemical_symbols()
+    positions = atoms.get_positions()
+    carbons = [i for i, s in enumerate(symbols) if s == "C"]
+    best = None
+    for a_i in range(len(carbons)):
+        for b_i in range(a_i + 1, len(carbons)):
+            ca, cb = carbons[a_i], carbons[b_i]
+            d = float(np.linalg.norm(positions[ca] - positions[cb]))
+            if best is None or d < best[0]:
+                best = (d, ca, cb)
+    if best is None:
+        raise AdditionBuildError("substrate has fewer than two carbons")
+    return best[1], best[2]
+
+
+def _alkene_face_normal(atoms: Atoms, carbon: int, graph: dict[int, list[int]]) -> np.ndarray:
+    """Unit normal to the local plane at ``carbon`` — the π face a radical
+    attacks. Computed from two of the carbon's substituent directions."""
+    positions = atoms.get_positions()
+    neighbours = graph[carbon]
+    if len(neighbours) < 2:
+        raise AdditionBuildError("alkene carbon has too few neighbours for a face normal")
+    v1 = positions[neighbours[0]] - positions[carbon]
+    v2 = positions[neighbours[1]] - positions[carbon]
+    normal = np.cross(v1, v2)
+    n = np.linalg.norm(normal)
+    if n < 1e-6:
+        raise AdditionBuildError("degenerate alkene geometry (collinear substituents)")
+    return normal / n
+
+
+def build_addition(tool: ToolSpec, substrate_name: str, spec_id: str) -> BuiltAddition:
+    """Build ``Tool· + alkene -> Tool-CH2-CH2·`` as three species.
+
+    The tool radical is placed with its radical-center carbon ``CC_ADD_BOND``
+    above one alkene carbon's π face (perpendicular attack), giving the
+    optimizer a sane starting adduct — it will pyramidalize the attacked carbon
+    and localize the radical on the other one.
+    """
+    try:
+        tool_h = saturated(tool.saturated_name)
+    except Exception as exc:
+        raise AdditionBuildError(f"unknown tool molecule {tool.saturated_name!r}: {exc}")
+    donor = pick_abstractable_hydrogen(tool_h, tool.donor_site)
+    tool_graph = bond_graph(tool_h)
+    parent = tool_graph[donor][0]
+    tool_center_pre = parent  # index in tool_h; the atom that carries the open valence
+    tool_radical = remove_hydrogen(tool_h, donor)
+    tool_center = tool_center_pre if tool_center_pre < donor else tool_center_pre - 1
+
+    try:
+        substrate = saturated(substrate_name)
+    except Exception as exc:
+        raise AdditionBuildError(f"unknown substrate molecule {substrate_name!r}: {exc}")
+    sub_graph = bond_graph(substrate)
+    c_attack, _c_radical = _alkene_double_bond(substrate)
+    normal = _alkene_face_normal(substrate, c_attack, sub_graph)
+
+    # Place the tool radical so its center sits CC_ADD_BOND above the attacked
+    # carbon along the π-face normal.
+    tool_moved = tool_radical.copy()
+    target = substrate.get_positions()[c_attack] + normal * CC_ADD_BOND
+    tool_moved.translate(target - tool_moved.get_positions()[tool_center])
+
+    adduct = substrate + tool_moved
+
+    for label, atoms in (
+        ("tool_radical", tool_radical),
+        ("substrate", substrate),
+        ("adduct_radical", adduct),
+    ):
+        if has_clash(atoms):
+            raise AdditionBuildError(f"steric clash in {label} starting geometry")
+
+    return BuiltAddition(
+        spec_id=spec_id,
+        tool_radical=Species("tool_radical", tool_radical, unpaired_electrons(tool_radical)),
+        substrate=Species("substrate", substrate, unpaired_electrons(substrate)),
+        adduct_radical=Species("adduct_radical", adduct, unpaired_electrons(adduct)),
+    )
