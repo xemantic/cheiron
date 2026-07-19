@@ -10,6 +10,35 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — PBE0 on the surface model — and the guardrail catches its own blind spot
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Ran hydroxyl+adamantane (tertiary) clamped at **PBE0** to give the datasheet's
+surface-model barrier a hybrid-grade value instead of a family-shift estimate.
+Two points: −1.38 @2.4 Å, −2.26 @1.8 Å; the extractor said barrier 0.0.
+
+I did **not** record that as "barrierless," because the resolution guardrail I
+added this morning had a blind spot I hit immediately: `barrier_well_resolved`
+returned `None` (no flag) whenever the barrier was 0, but a *2-point* scan
+cannot exclude a small saddle sitting between its points — and hydroxyl is the
+exact tool that goes 0 → 1.8 kcal/mol from PBE to PBE0 on methane. So a sparse
+grid reporting "0" is as untrustworthy as a sparse grid reporting a peak.
+
+Fix: the guardrail now flags a barrierless verdict too unless the approach is
+actually sampled — ≥3 points, gaps ≤0.3 Å, monotonically downhill. The
+2-point PBE0 scan is now correctly marked *unresolved* (and I fixed a
+floating-point gap comparison that a real 0.3 Å grid trips: 2.1 − 1.8 =
+0.30000000000000004). The honest statement for the datasheet stands as the
+prior estimate: hydroxyl on the adamantane tertiary site has a **small PBE0
+barrier, ≲1.5 kcal/mol** (consistent with the two negative points and the
+methane family shift), not a measured zero.
+
+Third near-miss turned into a guardrail this session (compression walls →
+approach-only max; coarse positive barriers → interior-max + gap check; sparse
+"barrierless" → sampling check). The barrier extractor is now hard to fool in
+the three ways I actually fooled it.
+
 ## 2026-07-19 — Closed: the fully-converged handle-steric barrier, after six tries and a 2-hour window
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

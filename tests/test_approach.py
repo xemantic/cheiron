@@ -209,13 +209,26 @@ def test_barrier_well_resolved_flags_coarse_grid():
     assert fine.barrier_well_resolved() is True
 
 
-def test_barrier_well_resolved_none_when_downhill():
+def test_barrier_well_resolved_true_for_sampled_downhill():
+    """A barrierless verdict is trustworthy only when the approach is actually
+    sampled: >=3 points, small gaps, monotonically downhill on approach."""
     scan = ApproachScan(spec_id="x", method="m", reference_hartree=0.0)
     kcal = 1.0 / 627.509474
-    for d, e in ((2.4, -0.5), (2.0, -2.0), (1.6, -8.0)):
+    for d, e in ((2.4, -0.5), (2.1, -2.0), (1.8, -8.0)):
         scan.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
     assert scan.barrier_kcal() == 0.0
-    assert scan.barrier_well_resolved() is None
+    assert scan.barrier_well_resolved() is True
+
+
+def test_barrier_well_resolved_false_for_sparse_barrierless():
+    """Two points reporting 0 cannot exclude a small saddle between them
+    (the hydroxyl+adamantane PBE0 case). Must flag as unresolved."""
+    scan = ApproachScan(spec_id="x", method="m", reference_hartree=0.0)
+    kcal = 1.0 / 627.509474
+    for d, e in ((2.4, -1.38), (1.8, -2.26)):
+        scan.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
+    assert scan.barrier_kcal() == 0.0
+    assert scan.barrier_well_resolved() is False
 
 
 def test_barrier_well_resolved_false_when_peak_at_endpoint():

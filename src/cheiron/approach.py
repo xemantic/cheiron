@@ -201,13 +201,29 @@ class ApproachScan:
         min_distance = min(rel, key=lambda t: t[1])[0]
         approach = sorted((d, e) for d, e in rel if d >= min_distance)  # near→far
         if self.barrier_kcal() == 0.0:
-            return None  # downhill: no saddle to resolve
+            # "Barrierless" is only trustworthy if the approach is actually
+            # sampled: a 2-point scan can hide a small saddle between its points
+            # (hydroxyl went 0 → 1.8 kcal/mol from PBE to PBE0). Require ≥3
+            # approach points, no internal gap >max_gap, and a genuinely
+            # non-increasing (downhill) approach; otherwise flag as unresolved.
+            if len(approach) < 3:
+                return False
+            gaps_ok = all(
+                approach[i + 1][0] - approach[i][0] <= max_gap + 1e-9
+                for i in range(len(approach) - 1)
+            )
+            energies_near_to_far = [e for _, e in approach]  # near→far
+            downhill = all(
+                energies_near_to_far[i] <= energies_near_to_far[i + 1] + 1e-9
+                for i in range(len(energies_near_to_far) - 1)
+            )  # energy rises going outward = falls on approach = downhill
+            return gaps_ok and downhill
         peak_i = max(range(len(approach)), key=lambda i: approach[i][1])
         if peak_i == 0 or peak_i == len(approach) - 1:
             return False  # peak at an endpoint: saddle not bracketed
         left_gap = approach[peak_i][0] - approach[peak_i - 1][0]
         right_gap = approach[peak_i + 1][0] - approach[peak_i][0]
-        return left_gap <= max_gap and right_gap <= max_gap
+        return left_gap <= max_gap + 1e-9 and right_gap <= max_gap + 1e-9
 
     def to_dict(self) -> dict:
         return {
