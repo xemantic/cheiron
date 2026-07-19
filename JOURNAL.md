@@ -10,6 +10,41 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Addition selectivity: anti-Markovnikov by 3.8 kcal/mol — the fourth axis, and a cross-operation contrast
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Radical addition's last uncharacterized axis is regioselectivity — *which*
+alkene carbon the tool attacks — the bond-forming analog of abstraction's C–H
+site selectivity. Measured both regiochemistries of methyl + propene
+(UKS/PBE/def2-SVP):
+
+| pathway | attacked C | radical lands on | ΔE (kcal/mol) |
+|---------|-----------|------------------|--------------:|
+| anti-Markovnikov | terminal CH2 | secondary C | **−32.5** |
+| Markovnikov | internal CH | primary C | −28.7 |
+
+**Anti-Markovnikov preferred by 3.8 kcal/mol** — the textbook radical
+regiochemistry, recovered from first principles. The margin *is* the
+secondary-vs-primary radical stabilization difference (~3–4 kcal/mol known);
+attacking the terminal carbon leaves the unpaired electron on the
+more-substituted, more-stabilized carbon. Same known-regularity validation
+used throughout, now on selectivity.
+
+**Cross-operation contrast worth noting.** Abstraction's *site* selectivity on
+adamantane was tiny — 1.14 kcal/mol thermodynamic, ~0 kinetic — so it
+concluded "selectivity is entirely positional; chemistry doesn't discriminate."
+Addition's *regio* selectivity is 3× larger (3.8 kcal/mol) because
+primary-vs-secondary radical is a bigger energy gap than adamantane's
+tertiary-vs-secondary C–H. So the two operations sit differently on the
+chemistry-vs-positioning axis: **abstraction needs the machine to choose the
+site; addition has real intrinsic regiochemistry the machine can lean on.**
+A toolkit-level design rule that only comparing two operations could produce.
+
+Radical addition is now characterized on all four axes — favorability,
+structure, feasibility, selectivity — matching abstraction. The design loop
+handles two reaction classes to the same depth.
+
 ## 2026-07-19 — Certified: PBE0 addition barrier 3.84 kcal/mol (well-resolved), closing addition feasibility
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
