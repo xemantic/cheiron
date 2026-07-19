@@ -10,6 +10,45 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — A second operation: radical addition works and validates against known chemistry
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The loop now does more than one reaction. Everything before this was hydrogen
+abstraction (bond *transfer*); today it took a **bond-forming** step —
+radical addition across a C=C — from scaffold to validated result in one
+session, without disturbing the abstraction pipeline (52→ green throughout;
+the shared arbiter is untouched, the new evaluator just calls `evaluate_species`
+on the three species and combines them).
+
+First two additions (`Tool· + H2C=CH2 → Tool-CH2-CH2·`, UKS/PBE/def2-SVP):
+
+| tool | ΔE (kcal/mol) |
+|------|--------------:|
+| ethynyl | −66.1 |
+| methyl | −32.1 |
+
+The **methyl anchor validates the operation the same way methane validated
+abstraction**: methyl + ethylene → n-propyl radical has a literature electronic
+ΔE around −28 to −30 kcal/mol; PBE gives −32.1, overbinding by the same few
+kcal/mol it overbinds abstraction. Right sign, right magnitude, right method
+bias. And the tool ordering carries across operations — ethynyl is as
+dramatically hotter here (−66 vs −32) as it was in abstraction (−26 vs 0 on
+methane), because the same strong-radical character drives both.
+
+Significance for the project: this is the M4 headline — **the design loop is
+not hardwired to one reaction.** The PROPOSE→BUILD→ARBITER→SCORE machinery,
+the append-only ledger discipline, and the method-with-every-number rule all
+transferred to a new bond-forming operation with a small isolated module. A
+positional-assembly toolkit needs both take-away and build-up steps; the loop
+now demonstrably validates both.
+
+Next slices: barriers under approach for addition (the M1 machinery is
+abstraction-shaped, so this needs its own thin adapter), a SCORE path, and a
+few more tool/substrate pairs to see whether an additivity-like structure
+holds for addition too (no Hess-law guarantee here — the three-species
+stoichiometry differs).
+
 ## 2026-07-19 — PBE0 on the surface model — and the guardrail catches its own blind spot
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
