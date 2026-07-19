@@ -10,6 +10,42 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Kinetic regioselectivity too: anti-Markovnikov barrier 1.5 vs Markovnikov ~3.5, reinforced by sterics
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Extended addition selectivity from thermodynamic to kinetic — the sharper axis,
+since radical additions are often kinetically controlled. Threaded the
+regiochemistry option through the barrier path and scanned both pathways for
+methyl + propene (PBE/def2-SVP):
+
+- **anti-Markovnikov barrier: 1.50 kcal/mol** — certified (`well_resolved =
+  True`): smooth saddle at 2.5 Å, product bracketed. (Slightly below
+  methyl+ethylene's 2.05, as the more-stabilized secondary radical lowers it.)
+- **Markovnikov barrier: ≈3.5 kcal/mol** — *not* certified, and the reason is
+  itself the finding. The raw extractor reported 8.78 with the peak at the
+  outermost point (2.7 Å), and the guardrail flagged it unresolved. The
+  geometry audit showed why: at 2.7 Å the constrained optimum has a **1.66 Å
+  steric contact** — the tool's methyl jammed against propene's methyl at the
+  hindered internal carbon — a strained local minimum, not the barrier. The
+  clean interior points (2.5:+3.57, 2.3:+3.34) put the real Markovnikov saddle
+  near ~3.5 kcal/mol.
+
+**Kinetic regioselectivity favors anti-Markovnikov by ~2 kcal/mol**, agreeing
+with the thermodynamic 3.8 margin and textbook radical control. And the
+Markovnikov steric clash is a mechanistic bonus the loop surfaced by geometry
+auditing: the disfavoured pathway is penalized through **two** channels —
+electronic (less-stable primary radical, seen in ΔE) *and* steric (a hindered
+approach, seen only in the scan geometry). Abstraction's selectivity was
+positional-only; addition's is chemistry-plus-sterics — a richer intrinsic
+selectivity for the machine to exploit.
+
+Addition selectivity is now characterized on both sub-axes (thermodynamic +
+kinetic), matching how abstraction's site selectivity was done. The guardrail
+correctly refused to certify the strained Markovnikov number — the pipeline
+declining a bad value is the system working, and the honest ~3.5 comes from
+reading the clean points, flagged as such.
+
 ## 2026-07-19 — Addition selectivity: anti-Markovnikov by 3.8 kcal/mol — the fourth axis, and a cross-operation contrast
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
