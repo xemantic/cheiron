@@ -81,3 +81,42 @@ def test_addition_attacks_terminal_carbon_of_propene():
                  key=lambda i: min(np.linalg.norm(pos[i] - pos[c]) for c in (terminal, internal)))
     assert (np.linalg.norm(pos[center] - pos[terminal])
             < np.linalg.norm(pos[center] - pos[internal]))
+
+
+def test_addition_approach_realizes_distance_and_indices():
+    from cheiron.addition import build_addition_approach
+
+    for d in (3.0, 2.4, 2.0):
+        appr = build_addition_approach(TOOLS["methyl"], "C2H4", d)
+        realized = appr.atoms.get_distance(appr.alkene_carbon, appr.tool_center)
+        assert realized == pytest.approx(d, abs=1e-6)
+        # ethylene(6) + methyl(4) = 10 atoms; doublet supersystem
+        assert len(appr.atoms) == 10
+        assert appr.spin == 1
+        syms = appr.atoms.get_chemical_symbols()
+        assert syms[appr.alkene_carbon] == "C" and syms[appr.tool_center] == "C"
+
+
+def test_addition_approach_targets_terminal_carbon_on_propene():
+    from cheiron.addition import build_addition_approach
+    from cheiron.chemistry.species import saturated
+
+    sub = saturated("C3H6_Cs")
+    sub_graph = bond_graph(sub)
+    sub_syms = sub.get_chemical_symbols()
+    positions = sub.get_positions()
+    carbons = [i for i, s in enumerate(sub_syms) if s == "C"]
+    pairs = [(np.linalg.norm(positions[a] - positions[b]), a, b)
+             for i, a in enumerate(carbons) for b in carbons[i + 1:]]
+    _, ca, cb = min(pairs)
+    n_h = lambda c: sum(1 for k in sub_graph[c] if sub_syms[k] == "H")
+    terminal = ca if n_h(ca) >= n_h(cb) else cb
+    appr = build_addition_approach(TOOLS["methyl"], "C3H6_Cs", 2.4)
+    assert appr.alkene_carbon == terminal
+
+
+def test_addition_approach_rejects_bad_distance():
+    from cheiron.addition import AdditionBuildError, build_addition_approach
+
+    with pytest.raises(AdditionBuildError):
+        build_addition_approach(TOOLS["methyl"], "C2H4", 0.0)

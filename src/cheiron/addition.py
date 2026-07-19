@@ -91,13 +91,12 @@ def _alkene_face_normal(atoms: Atoms, carbon: int, graph: dict[int, list[int]]) 
     return normal / n
 
 
-def build_addition(tool: ToolSpec, substrate_name: str, spec_id: str) -> BuiltAddition:
-    """Build ``Tool· + alkene -> Tool-CH2-CH2·`` as three species.
+def _place_tool_over_alkene(tool: ToolSpec, substrate_name: str, distance: float):
+    """Shared placement: put the tool radical's center ``distance`` Å above the
+    anti-Markovnikov (terminal) alkene carbon along its π-face normal.
 
-    The tool radical is placed with its radical-center carbon ``CC_ADD_BOND``
-    above one alkene carbon's π face (perpendicular attack), giving the
-    optimizer a sane starting adduct — it will pyramidalize the attacked carbon
-    and localize the radical on the other one.
+    Returns (tool_radical, substrate, combined, c_attack, tool_center_combined)
+    where indices refer to the combined system (substrate atoms first).
     """
     try:
         tool_h = saturated(tool.saturated_name)
@@ -106,9 +105,8 @@ def build_addition(tool: ToolSpec, substrate_name: str, spec_id: str) -> BuiltAd
     donor = pick_abstractable_hydrogen(tool_h, tool.donor_site)
     tool_graph = bond_graph(tool_h)
     parent = tool_graph[donor][0]
-    tool_center_pre = parent  # index in tool_h; the atom that carries the open valence
     tool_radical = remove_hydrogen(tool_h, donor)
-    tool_center = tool_center_pre if tool_center_pre < donor else tool_center_pre - 1
+    tool_center = parent if parent < donor else parent - 1
 
     try:
         substrate = saturated(substrate_name)
@@ -116,22 +114,72 @@ def build_addition(tool: ToolSpec, substrate_name: str, spec_id: str) -> BuiltAd
         raise AdditionBuildError(f"unknown substrate molecule {substrate_name!r}: {exc}")
     sub_graph = bond_graph(substrate)
     c_a, c_b = _alkene_double_bond(substrate)
-    # Anti-Markovnikov: the radical attacks the *terminal* (less substituted)
-    # alkene carbon — the one with more hydrogens — leaving the radical on the
-    # more-substituted, more-stabilized carbon. Ties (ethylene) are symmetric.
     symbols = substrate.get_chemical_symbols()
     def n_h(c: int) -> int:
         return sum(1 for k in sub_graph[c] if symbols[k] == "H")
     c_attack = c_a if n_h(c_a) >= n_h(c_b) else c_b
     normal = _alkene_face_normal(substrate, c_attack, sub_graph)
 
-    # Place the tool radical so its center sits CC_ADD_BOND above the attacked
-    # carbon along the π-face normal.
     tool_moved = tool_radical.copy()
-    target = substrate.get_positions()[c_attack] + normal * CC_ADD_BOND
+    target = substrate.get_positions()[c_attack] + normal * distance
     tool_moved.translate(target - tool_moved.get_positions()[tool_center])
+    combined = substrate + tool_moved
+    return tool_radical, substrate, combined, c_attack, len(substrate) + tool_center
 
-    adduct = substrate + tool_moved
+
+@dataclass
+class AdditionApproach:
+    """The Tool· ... alkene supersystem at one approach distance (for barrier
+    scans of the bond-forming coordinate d(tool_center ... alkene_carbon))."""
+
+    atoms: Atoms
+    spin: int
+    distance: float
+    alkene_carbon: int    # the attacked carbon, in the combined system
+    tool_center: int      # the tool radical center, in the combined system
+
+
+def build_addition_approach(
+    tool: ToolSpec, substrate_name: str, distance: float
+) -> AdditionApproach:
+    """Supersystem for an addition approach scan: tool radical ``distance`` Å
+    from the alkene attack-carbon along the π-face normal, no bond yet formed.
+
+    Unlike abstraction's approach coordinate (a hydrogen in flight between two
+    heavy atoms), the addition coordinate is the tool center closing on the
+    alkene carbon; freezing that distance and relaxing the rest traces the
+    barrier to C–C bond formation.
+    """
+    if distance <= 0:
+        raise AdditionBuildError(f"approach distance must be positive, got {distance}")
+    _tr, _sub, combined, c_attack, tool_center = _place_tool_over_alkene(
+        tool, substrate_name, distance
+    )
+    realized = combined.get_distance(c_attack, tool_center)
+    if abs(realized - distance) > 1e-6:
+        raise AdditionBuildError(
+            f"placement failed: requested d={distance:.4f}, realized {realized:.4f}"
+        )
+    return AdditionApproach(
+        atoms=combined,
+        spin=unpaired_electrons(combined),
+        distance=distance,
+        alkene_carbon=c_attack,
+        tool_center=tool_center,
+    )
+
+
+def build_addition(tool: ToolSpec, substrate_name: str, spec_id: str) -> BuiltAddition:
+    """Build ``Tool· + alkene -> Tool-CH2-CH2·`` as three species.
+
+    The tool radical is placed with its radical-center carbon ``CC_ADD_BOND``
+    above one alkene carbon's π face (perpendicular attack), giving the
+    optimizer a sane starting adduct — it will pyramidalize the attacked carbon
+    and localize the radical on the other one.
+    """
+    tool_radical, substrate, adduct, _c_attack, _tc = _place_tool_over_alkene(
+        tool, substrate_name, CC_ADD_BOND
+    )
 
     for label, atoms in (
         ("tool_radical", tool_radical),
