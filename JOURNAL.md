@@ -10,6 +10,38 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Search, not enumeration: the loop chose its own next measurement — and its prediction was exact
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+M3's charter — *turn on the proposer; let the loop explore rather than grind a
+hand-written grid* — is now closed. `cheiron.search.propose_next` fits the
+additive model to the ledger and selects the single most informative
+unmeasured candidate by an explore-then-exploit rule (anchor any unmeasured
+tool/workpiece factor first; otherwise verify the most-favourable prediction
+and publish the residual). `scripts/search.py --evaluate` runs the whole
+SELECT→PROPOSE→BUILD→ARBITER step by itself.
+
+First fully autonomous cycle, start to finish with no candidate picked by me:
+
+    next candidate: habs-ethynyl-ada-silane
+      prediction:  -45.1 kcal/mol   (most favourable unmeasured cell)
+    ... arbiter ...
+      dE = -45.1 kcal/mol           residual 0.0
+
+**The loop proposed a step, evaluated it, and its own model predicted the
+result to the decimal.** The candidate — the handle-mounted ethynyl tool
+abstracting from silane — is a sensible "most favourable unmeasured" pick
+(hot tip, weak Si–H), and lands second only to free ethynyl+silane (−45.9).
+
+This is the design loop as originally drawn, now actually turning on its own:
+PROPOSE → BUILD → ARBITER → SCORE → (model) → PROPOSE again. Everything the
+loop learned (the additive terms across 8 tools and 11 workpieces, two element
+rows) fed a choice the loop made unaided, and the arbiter confirmed it. What
+remains for M3/S3 is to point it at cells where the model should *fail* —
+publishing the first honest residual is worth more than another confirmation —
+but the machinery to explore is now live, not hypothetical.
+
 ## 2026-07-19 — Predict-then-verify, exact: methyl+water = +10.2, and the guard passes on three element families
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
