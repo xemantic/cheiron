@@ -10,6 +10,30 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Predict-then-verify, exact: methyl+water = +10.2, and the guard passes on three element families
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Tested the reversibility guard on fresh, silicon-free data. Added water (H2O)
+as an O-H donor workpiece; `methyl` abstracting its O-H is the exact reverse of
+the measured `hydroxyl`-from-methane (−10.2), so reversibility *predicts* it at
+**+10.2 before computing**. The arbiter returned **+10.2** — to the decimal.
+
+The automated check now enforces three reverse relationships, one per element
+family, all passing exactly:
+
+    OK  methyl+methane  (+0.0) self-reverse                = +0.00   [carbon]
+    OK  hydroxyl+methane(-10.2) + methyl+water   (+10.2)   = -0.00   [oxygen]
+    OK  silyl+methane   (+19.7) + methyl+silane  (-19.7)   = -0.00   [silicon]
+
+Two things at once: a **prediction made from a physics identity and confirmed
+exactly** (the design-then-validate cycle at its cleanest — the number was
+known before the calculation ran), and the **guard demonstrated on independent
+data** (it found the new pair automatically and passed). A convergence or spin
+bug that shifted `methyl+water` even 1 kcal/mol would now break this pair and
+exit nonzero. The loop predicts its own results from invariants and then checks
+that the arbiter obeyed them — across C, O, and Si.
+
 ## 2026-07-19 — Made the reversibility check permanent: an automated physics guard on the ledger
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
