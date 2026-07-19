@@ -119,7 +119,9 @@ def _run_barrier(args, config, spec_id: str) -> int:
 
     scans = RESULTS / "scans.jsonl"
     print(f"distances (A): {sorted(args.distances, reverse=True)}")
-    scan = addition_barrier_scan(TOOLS[args.tool], args.substrate, args.distances, config)
+    scan = addition_barrier_scan(
+        TOOLS[args.tool], args.substrate, args.distances, config, args.attack
+    )
     record = scan.to_dict()
     record["created_unix"] = int(time.time())
     _append(scans, record)

@@ -156,7 +156,7 @@ class AdditionApproach:
 
 
 def build_addition_approach(
-    tool: ToolSpec, substrate_name: str, distance: float
+    tool: ToolSpec, substrate_name: str, distance: float, attack: str = "anti-markovnikov"
 ) -> AdditionApproach:
     """Supersystem for an addition approach scan: tool radical ``distance`` Å
     from the alkene attack-carbon along the π-face normal, no bond yet formed.
@@ -164,12 +164,13 @@ def build_addition_approach(
     Unlike abstraction's approach coordinate (a hydrogen in flight between two
     heavy atoms), the addition coordinate is the tool center closing on the
     alkene carbon; freezing that distance and relaxing the rest traces the
-    barrier to C–C bond formation.
+    barrier to C–C bond formation. ``attack`` selects the regiochemistry, so
+    the two regiochemistries' *barriers* (kinetic selectivity) can be compared.
     """
     if distance <= 0:
         raise AdditionBuildError(f"approach distance must be positive, got {distance}")
     _tr, _sub, combined, c_attack, tool_center = _place_tool_over_alkene(
-        tool, substrate_name, distance
+        tool, substrate_name, distance, attack
     )
     realized = combined.get_distance(c_attack, tool_center)
     if abs(realized - distance) > 1e-6:
@@ -216,7 +217,7 @@ def build_addition(
     )
 
 
-def addition_barrier_scan(tool, substrate_name, distances, config):
+def addition_barrier_scan(tool, substrate_name, distances, config, attack="anti-markovnikov"):
     """Relaxed approach-barrier scan of the bond-forming coordinate.
 
     Freezes d(alkene_carbon ... tool_center) at each distance and relaxes the
@@ -224,13 +225,15 @@ def addition_barrier_scan(tool, substrate_name, distances, config):
     (E(Tool·) + E(alkene)). Returns an ``approach.ApproachScan`` so the shared,
     guardrailed barrier extraction (approach-only max; resolution check) applies
     unchanged. ``distances`` should bracket the C–C bond region (~2.6 → 1.9 Å).
+    ``attack`` selects the regiochemistry (for kinetic-selectivity comparisons).
     """
     # local imports: reuse the abstraction module's optimizer and scan container
     from .approach import ApproachScan, ScanPoint, _constrained_optimize
     from .arbiter import evaluate_species
 
+    regio = "" if attack == "anti-markovnikov" else "-mark"
     scan = ApproachScan(
-        spec_id=f"add-{tool.id}-{substrate_name}",
+        spec_id=f"add-{tool.id}-{substrate_name}{regio}",
         method=config.method_string() + " [addition approach]",
         kind="addition_approach_scan",
     )
@@ -253,7 +256,7 @@ def addition_barrier_scan(tool, substrate_name, distances, config):
     for d in sorted(distances, reverse=True):  # far -> near
         t0 = time.time()
         try:
-            appr = build_addition_approach(tool, substrate_name, d)
+            appr = build_addition_approach(tool, substrate_name, d, attack)
         except AdditionBuildError as exc:
             scan.points.append(ScanPoint(d, None, False, False, time.time() - t0, str(exc)))
             continue
