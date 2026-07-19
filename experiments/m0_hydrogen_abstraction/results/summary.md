@@ -53,7 +53,7 @@ fragments; feasible gate at 15 kcal/mol. '—' = not yet scanned.
 | habs-methyl-adamantane | methyl | adamantane | tertiary | -9.0 | yes | — | — |
 | habs-methyl-cyclobutane | methyl | cyclobutane | secondary | -8.8 | yes | — | — |
 | habs-vinyl-ethane | vinyl | ethane | primary | -8.6 | yes | 5.3 (PBE0) | yes |
-| habs-methyl-methanol | methyl | methanol | carbon | -7.9 | yes | — | — |
+| habs-methyl-methanol | methyl | methanol | carbon | -7.9 | yes | 1.3 | yes |
 | habs-methyl-adamantane-2h | methyl | adamantane-2h | secondary | -7.8 | yes | — | — |
 | habs-amino-ethane | amino | ethane | primary | -6.6 | yes | 6.1 (PBE0) | yes |
 | habs-methyl-ethane | methyl | ethane | primary | -5.4 | yes | 4.7 | yes |

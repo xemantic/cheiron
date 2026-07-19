@@ -10,6 +10,40 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Separating experiment: a polar substrate lowers the barrier even for a nonpolar tool
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The control that separates driving force from polarity: **methyl** (nonpolar
+tool) on **methanol** (polar substrate), clamped PBE. If the barrier landed
+near the C-family BEP prediction (~4.1 kcal/mol at ΔE −7.9), substrate
+polarity would be kinetically inert; if well below, the polar C-H is
+intrinsically easier regardless of the tool.
+
+It landed **well below: barrier ≈ 1.3 kcal/mol** (peak +1.26 at 2.0 Å) —
+roughly a third of the ~4.1 the nonpolar-substrate methyl ladder predicts.
+So a polar substrate *does* carry a genuine kinetic advantage, independent of
+the tool's own polarity. Combined with hydroxyl+methanol (barrierless), the
+methanol α C-H is easy for both a polar and a nonpolar abstractor. Practical
+read for SELECT: **heteroatom-adjacent C-H sites are kinetically cheap targets**
+— useful, since real functionalized surfaces are full of them.
+
+**A code bug this exposed and fixed.** The raw profile was
+−0.5 → +1.3 → −5.8 → +11.3 → +28.3: the H transfers by ~1.6 Å (deep well),
+then forcing the approach distance still shorter just *compresses the
+newly-formed bond* into a +28 wall. `barrier_kcal()` was taking the max over
+all points and so reported that compression wall as the "barrier." Fixed: the
+barrier is now the peak on the **approach side only** — points nearer than the
+product minimum are compression and excluded (test-backed; correction record
+appended to `scans.jsonl`, superseding the bogus 28.3). Same lesson as the
+rigid-scan wall from three days ago, now handled in the extractor rather than
+by eye.
+
+Caveat kept: 1.3 is provisional — the coarse 5-point grid may not bracket the
+true product minimum, so it is a lower-bound estimate; a fine grid near the
+saddle would sharpen it. The *direction* (well below the C-family line) is
+robust.
+
 ## 2026-07-19 — Clamped fix works: hydroxyl abstracts methanol's α C-H barrierlessly (audited)
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.

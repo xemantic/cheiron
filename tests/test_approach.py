@@ -177,3 +177,16 @@ def test_integrity_roundtrip_through_xyz_body():
         system.atoms, rebuilt, system.target_h, system.workpiece_carbon, system.tool_center
     )
     assert result.ok
+
+
+def test_barrier_excludes_post_transfer_compression():
+    """After the H transfers (deep product-like well), forcing the approach
+    distance shorter compresses the formed bond into a wall that is NOT a
+    reaction barrier. The barrier must be the peak on the approach side only."""
+    scan = ApproachScan(spec_id="x", method="m", reference_hartree=0.0)
+    kcal = 1.0 / 627.509474
+    # far -> near: mild pre-barrier, then product well, then compression wall
+    for d, e in ((2.4, -0.5), (2.0, 1.3), (1.6, -5.8), (1.3, 11.0), (1.1, 28.0)):
+        scan.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
+    # min-energy point is 1.6; only d>=1.6 count -> peak is +1.3, not +28
+    assert scan.barrier_kcal() == pytest.approx(1.3, rel=1e-6)

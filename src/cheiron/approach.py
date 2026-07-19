@@ -161,13 +161,27 @@ class ApproachScan:
         ]
 
     def barrier_kcal(self) -> float | None:
-        """Highest point of the profile above the separated fragments — the
-        rigid-scan estimate of the barrier under approach. None if no usable
-        points; 0.0 if the whole profile is downhill."""
+        """Barrier under approach: the highest point on the way *in* to the
+        reaction minimum, above the separated fragments.
+
+        Only the approach side counts. Once the transfer completes, forcing the
+        approach distance still shorter compresses the already-formed bond and
+        the energy shoots up — a wall that is not a reaction barrier. So the
+        maximum is taken only over points at distances ≥ the distance of the
+        lowest-energy (product-like) point; anything nearer is compression and
+        excluded. None if no usable points; 0.0 if the approach is all downhill.
+
+        Caveat: this assumes the grid brackets the product minimum. A grid that
+        stops before the true product can mistake a pre-reactive well for it and
+        clip a real barrier — bracket the minimum, and prefer a fine grid near
+        the saddle.
+        """
         rel = self.relative_kcal()
         if not rel:
             return None
-        return max(0.0, max(e for _, e in rel))
+        min_distance = min(rel, key=lambda t: t[1])[0]
+        approach = [e for d, e in rel if d >= min_distance]
+        return max(0.0, max(approach))
 
     def to_dict(self) -> dict:
         return {
