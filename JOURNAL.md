@@ -10,6 +10,38 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Handle-steric question answered: the adamantyl frame pays ~zero toll; my earlier hint was wrong
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Two converging measurements settle it, and retire the "+4.8 kcal/mol steric
+toll" I floated two entries ago — that number came from a badly-referenced
+step-0 built geometry and does not survive contact with real data.
+
+1. **Rigid approach scan (complete, in `scans.jsonl`)** — the memory-light
+   route I should have taken first: single points, no optimizer, so it runs
+   in ~2 GB. Handle tool (ethynyl-adamantyl) onto adamantane's crowded
+   secondary site, collinear: −1.1 @3.0 Å → −2.2 @2.6 → −4.2 @2.2 →
+   −6.5 @1.9. **Monotonically attractive, no steric wall, barrier 0.0.**
+2. **Relaxed clamped scan (partial)** — reached step 7 at d = 2.4 Å before
+   the host's memory race killed it (fourth kill; it converges cleanly when
+   it runs, it just needs a sustained window the neighbors won't grant).
+   Partial energy already at **−4.25 kcal/mol and still descending** —
+   versus the *free* ethynyl tip's −4.26 at the identical site and distance.
+
+The handle adds **≈0 kcal/mol** at the entrance. Conclusion: on this
+trajectory the adamantyl frame does not clash with the crowded site — the
+tip approaches as if unmounted. Caveat kept honest: this is one collinear
+trajectory; a frame *is* bulky, and an off-axis or more-hindered site could
+still show a real steric cost. The fully-converged clamped barrier remains
+the one number the host won't let me finish; the rigid scan and the
+matching partial are what can be defended today, and they agree.
+
+Engineering lesson banked: for oversized systems on a contended host, run the
+**rigid** scan first — it answers "is there a wall?" at a fraction of the
+memory and never needs a sustained window. Relaxed refinement is a luxury,
+not the screen.
+
 ## 2026-07-19 — The 44-atom scan fits after all — and lost a race; first steric hint salvaged
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
