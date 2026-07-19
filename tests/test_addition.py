@@ -46,3 +46,38 @@ def test_addition_forms_a_new_carbon_carbon_bond():
 def test_addition_rejects_non_alkene_substrate():
     with pytest.raises(AdditionBuildError):
         build_addition(TOOLS["methyl"], "CH4", "add-methyl-methane")  # no C=C, one carbon
+
+
+def test_addition_attacks_terminal_carbon_of_propene():
+    """Anti-Markovnikov: on propene (C3H6_Cs) the tool is placed nearest the
+    terminal CH2 (2 H) of the C=C, not the internal CH (1 H). Tests the
+    attack-site targeting directly, independent of starting-geometry bonding."""
+    from cheiron.chemistry.species import saturated
+
+    sub = saturated("C3H6_Cs")
+    n_sub = len(sub)
+    sub_graph = bond_graph(sub)
+    sub_syms = sub.get_chemical_symbols()
+    # the two double-bond carbons = the closest C-C pair
+    positions = sub.get_positions()
+    carbons = [i for i, s in enumerate(sub_syms) if s == "C"]
+    pairs = [(np.linalg.norm(positions[a] - positions[b]), a, b)
+             for i, a in enumerate(carbons) for b in carbons[i + 1:]]
+    _, ca, cb = min(pairs)
+    def n_h(c):
+        return sum(1 for k in sub_graph[c] if sub_syms[k] == "H")
+    terminal = ca if n_h(ca) >= n_h(cb) else cb
+    internal = cb if terminal == ca else ca
+
+    built = build_addition(TOOLS["methyl"], "C3H6_Cs", "add-methyl-C3H6_Cs")
+    adduct = built.adduct_radical.atoms
+    tc = built.adduct_radical  # tool center index is n_sub + (its index within the tool)
+    pos = adduct.get_positions()
+    tool_center = None
+    # tool carbon nearest a substrate carbon at ~1.5 A is the radical center
+    tool_carbons = [i for i in range(n_sub, len(adduct))
+                    if adduct.get_chemical_symbols()[i] == "C"]
+    center = min(tool_carbons,
+                 key=lambda i: min(np.linalg.norm(pos[i] - pos[c]) for c in (terminal, internal)))
+    assert (np.linalg.norm(pos[center] - pos[terminal])
+            < np.linalg.norm(pos[center] - pos[internal]))

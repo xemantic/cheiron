@@ -115,7 +115,14 @@ def build_addition(tool: ToolSpec, substrate_name: str, spec_id: str) -> BuiltAd
     except Exception as exc:
         raise AdditionBuildError(f"unknown substrate molecule {substrate_name!r}: {exc}")
     sub_graph = bond_graph(substrate)
-    c_attack, _c_radical = _alkene_double_bond(substrate)
+    c_a, c_b = _alkene_double_bond(substrate)
+    # Anti-Markovnikov: the radical attacks the *terminal* (less substituted)
+    # alkene carbon — the one with more hydrogens — leaving the radical on the
+    # more-substituted, more-stabilized carbon. Ties (ethylene) are symmetric.
+    symbols = substrate.get_chemical_symbols()
+    def n_h(c: int) -> int:
+        return sum(1 for k in sub_graph[c] if symbols[k] == "H")
+    c_attack = c_a if n_h(c_a) >= n_h(c_b) else c_b
     normal = _alkene_face_normal(substrate, c_attack, sub_graph)
 
     # Place the tool radical so its center sits CC_ADD_BOND above the attacked
