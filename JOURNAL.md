@@ -10,6 +10,42 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Addition feasibility: first barrier, well-resolved, and PBE's bias transfers
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The second operation now has all three axes measured, not just favorability.
+First production addition barrier — methyl + ethylene, PBE/def2-SVP, the
+bond-forming coordinate d(alkene-C···tool-C) frozen per point:
+
+| d (Å) | 2.7 | 2.5 | 2.3 | 2.1 | 1.9 |
+|---|---:|---:|---:|---:|---:|
+| E−E∞ (kcal/mol) | +0.93 | **+2.05** | +0.70 | −4.10 | −15.22 |
+
+**Barrier 2.05 kcal/mol, and the resolution guardrail passed it** (`well_resolved
+= True`): an interior maximum at 2.5 Å with lower points on both sides and
+0.2 Å spacing — a genuine early transition state, not a grid artifact. The same
+`ApproachScan` extraction and the three guardrails built for abstraction
+(approach-only max, compression-wall exclusion, sampling check) applied to the
+new operation unchanged.
+
+**PBE's barrier bias transfers.** Literature puts the methyl+ethylene addition
+barrier at ≈6–8 kcal/mol; PBE gives ≈2 — the same several-kcal underestimate
+PBE showed for abstraction (methyl+methane: PBE 8.2, PBE0 10.6, experiment
+≈14). So the barrier is qualitatively right (small, early, correct position)
+and quantitatively low by the expected amount; a PBE0 pass would lift it toward
+the literature value, exactly as it did for abstraction. That the *bias itself*
+is consistent across two independent operations is a small validation of the
+method ladder.
+
+Where the second operation stands: **favorability** (validated vs known ΔE),
+**structure** (approximately additive, empirically), and now **feasibility**
+(a real, guardrail-certified barrier that behaves like abstraction's under the
+same method bias). The design loop does two reaction classes end to end. Next
+refinements: a PBE0 addition barrier to confirm the ~6–8 target, and the same
+scan for a hotter tool (ethynyl — likely near-barrierless, mirroring
+abstraction).
+
 ## 2026-07-19 — Addition is *approximately* additive — empirically, not by identity
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
