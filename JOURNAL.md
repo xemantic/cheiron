@@ -10,6 +10,35 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Went hunting for a residual; the addition model held to 0.01 kcal/mol
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The abstraction additive model is exact by Hess's law, so autonomous search
+there only confirms. The place a model can actually *fail* is addition, whose
+additivity is empirical, not identity-backed. So I tested it where it might
+break: the model predicts hydroxyl+propene from hydroxyl+ethylene (−39.8) plus
+the propene offset (−0.78, the mean over methyl and ethynyl) → **−40.53**.
+
+Measured: **−40.5. Residual −0.01 kcal/mol.**
+
+I expected a real (nonzero) residual and got essentially none. The propene
+offset is more tool-independent than the earlier two-tool spread implied —
+hydroxyl, a polar O-tool, obeys the same offset as the carbon tools to a
+hundredth of a kcal/mol. So for simple radicals adding to simple alkenes,
+addition ΔE is *empirically* near-additive, tighter than the ~0.7 kcal/mol I
+had flagged as the coupling floor.
+
+The honest reading: the model earned trust on a third, chemically-distinct
+tool — but I have **not** found where addition additivity breaks, only that
+propene doesn't stress it. A real residual (the S3 negative result worth
+publishing) needs a substrate where the tool and the developing radical
+genuinely couple — conjugation (butadiene), a polar or bulky alkene, or a
+strained ring — where the "separate tool-term + substrate-term" picture should
+finally crack. That is the sharp next experiment the search machinery now
+exists to run; today's result says where *not* to look (unstrained mono-alkenes)
+and tightens the empirical additivity claim with a clean third data point.
+
 ## 2026-07-19 — Search, not enumeration: the loop chose its own next measurement — and its prediction was exact
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
