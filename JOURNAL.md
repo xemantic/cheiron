@@ -10,6 +10,38 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Silicon works, and silyl is the sharpest operation-split yet: worst abstractor, fine adder
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Extended the loop to a **second-row element** — a silyl radical ·SiH3, the tool
+family behind real proposed silicon mechanosynthesis tips. Two predictions,
+both confirmed with the right sign, and the pipeline handled silicon
+(def2-SVP) end to end with no changes:
+
+| operation | ΔE (kcal/mol) | predicted | verdict |
+|-----------|--------------:|-----------|---------|
+| abstraction from CH4 | **+19.7** | poor (Si–H < C–H, endothermic) | **unfavorable** — the worst abstractor measured |
+| addition to C2H4 | **−23.0** | competent (Si–C bond) | **favorable** |
+
+**The most dramatic operation-dependent ranking so far.** Silyl is the *only*
+strongly unfavorable abstractor in the whole ledger (+19.7 — it cannot pull an
+H off a hydrocarbon, because the Si–H bond it would form is too weak) yet a
+perfectly good adder (−23, mid-pack). Worst at one operation, fine at the
+other — because abstraction cares about the tool's bond to *hydrogen* and
+addition about its bond to *carbon*, and for silicon those diverge sharply.
+Every earlier tool at least abstracted *somewhat*; silicon makes the split
+categorical.
+
+Two things banked. (1) **Generality:** the arbiter, builders (both operations),
+and spin handling extend to second-row elements untouched — evidence the loop
+isn't overfit to C/N/O first-row chemistry. (2) **A genuine negative result,
+published:** silyl+methane at +19.7 is the ledger's first strongly-endothermic
+abstraction — a tool the loop tried and correctly rejected for that operation.
+Publishing the "this tool doesn't work here" is the failures-alongside-results
+commitment made concrete, and it is *useful*: it tells a real toolkit designer
+not to reach for a silyl tip when the step is an H-abstraction.
+
 ## 2026-07-19 — Kinetic regioselectivity too: anti-Markovnikov barrier 1.5 vs Markovnikov ~3.5, reinforced by sterics
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
