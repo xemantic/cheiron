@@ -10,6 +10,43 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Addition is *approximately* additive — empirically, not by identity
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Added propene (C3H6_Cs) as a second substrate — with anti-Markovnikov
+attack-site selection (the tool hits the terminal CH2, radical lands on the
+more-substituted carbon) — to ask whether addition ΔE decomposes into
+tool + substrate terms the way abstraction does. Results (UKS/PBE/def2-SVP):
+
+| tool | + ethylene | + propene | Δ(substrate) |
+|------|-----------:|----------:|-------------:|
+| ethynyl | −66.1 | −67.2 | −1.1 |
+| methyl | −32.1 | −32.5 | −0.4 |
+| **ethynyl − methyl** | **−34.0** | **−34.7** | |
+
+**It is additive — but only approximately, and that "approximately" is the
+point.** The tool-difference is substrate-independent to ~0.7 kcal/mol, and
+both tools gain a similar small amount going to propene (the secondary product
+radical is slightly more stabilized than ethylene's primary one). So a
+tool-term-plus-substrate-term model predicts addition ΔE to within ~1 kcal/mol.
+
+But contrast the abstraction ladder, where additivity held to **0.0001**
+kcal/mol: there it is an *exact identity* (ΔE = BDE_workpiece − BDE_tool,
+Hess's law). Addition has **no such guarantee** — the adduct fuses tool and
+substrate into one molecule whose energy need not split cleanly — yet it very
+nearly does, because the tool's C–C bond strength and the substrate's
+radical-stabilization contribute almost independently. The residual (~0.7–1
+kcal/mol) is the real coupling between them, and it is *information*: it is
+exactly what an additive screening model would get wrong, and it is small.
+
+Practical read: the anchor-then-predict strategy that made abstraction
+screening cheap transfers to addition — one measurement per tool (× ethylene)
+plus a per-substrate offset predicts the grid to ~1 kcal/mol — but here the
+model must be *validated*, not trusted, because no identity underwrites it.
+That is the honest difference between a guaranteed regularity and an empirical
+one, and the loop can now tell them apart by construction.
+
 ## 2026-07-19 — Operation-dependent tool ranking: abstraction strength does not predict addition strength
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
