@@ -239,3 +239,29 @@ def test_barrier_well_resolved_false_when_peak_at_endpoint():
     for d, e in ((2.4, 0.5), (2.2, 2.0), (2.0, 4.0)):
         scan.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
     assert scan.barrier_well_resolved() is False
+
+
+def test_barrier_well_resolved_flags_energetic_spike():
+    """A single mis-converged point (SCF found a higher state, flagged
+    'converged') is an interior max with small gaps but is NOT a real saddle.
+    Measured reproducibly for methyl+ethylene at PBE0 (+28 at d=2.5)."""
+    kcal = 1.0 / 627.509474
+    scan = ApproachScan(spec_id="x", method="m", reference_hartree=0.0)
+    # smooth bump around 2.4 with a spurious +28 spike at 2.5, product well at 1.9
+    for d, e in ((2.7, 2.0), (2.5, 28.3), (2.4, 4.9), (2.3, 3.5), (1.9, -6.8)):
+        scan.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
+    # the extractor still reports the spike as the max...
+    assert scan.barrier_kcal() > 20
+    # ...but the resolution check flags it as untrustworthy
+    assert scan.barrier_well_resolved() is False
+
+
+def test_barrier_well_resolved_true_for_sharp_but_real_saddle():
+    """A genuine saddle rises only modestly above its nearest neighbour, even
+    when the far side drops steeply to product — must still pass."""
+    kcal = 1.0 / 627.509474
+    scan = ApproachScan(spec_id="x", method="m", reference_hartree=0.0)
+    for d, e in ((2.4, 1.3), (2.2, 3.2), (2.0, 1.3), (1.8, -5.8)):
+        scan.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
+    assert scan.barrier_kcal() == pytest.approx(3.2, rel=1e-6)
+    assert scan.barrier_well_resolved() is True

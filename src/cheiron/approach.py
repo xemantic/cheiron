@@ -223,7 +223,16 @@ class ApproachScan:
             return False  # peak at an endpoint: saddle not bracketed
         left_gap = approach[peak_i][0] - approach[peak_i - 1][0]
         right_gap = approach[peak_i + 1][0] - approach[peak_i][0]
-        return left_gap <= max_gap + 1e-9 and right_gap <= max_gap + 1e-9
+        if left_gap > max_gap + 1e-9 or right_gap > max_gap + 1e-9:
+            return False
+        # Energetic-spike check: a bond-formation profile cannot rise more than
+        # ~SPIKE_KCAL above its nearest sampled neighbour over ≤max_gap Å — a
+        # taller isolated peak is a mis-converged SCF state flagged "converged",
+        # not a saddle. (Measured: methyl+ethylene addition reproducibly spikes
+        # to +28 at exactly d=2.5 Å at PBE0, while its true saddle is ~5.)
+        SPIKE_KCAL = 8.0
+        higher_neighbour = max(approach[peak_i - 1][1], approach[peak_i + 1][1])
+        return approach[peak_i][1] - higher_neighbour <= SPIKE_KCAL
 
     def to_dict(self) -> dict:
         return {

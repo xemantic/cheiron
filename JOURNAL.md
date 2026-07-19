@@ -10,6 +10,45 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — PBE0 addition barrier ≈5 (corrects toward literature) — and a reproducible SCF spike, now guarded
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+PBE0 barrier for methyl+ethylene addition, meant as the hybrid confirmation of
+yesterday's PBE ≈2. It delivered both a result and a bug.
+
+**The result.** Away from one pathological point, the profile is smooth and
+peaks at **≈4.9 kcal/mol near d = 2.4 Å** (2.7:+2.0 → 2.6:+3.8 → 2.4:+4.9 →
+2.3:+3.5 → 2.2:+2.1). So PBE0 lifts the barrier from PBE's ≈2 toward the
+literature ≈6–8 — the **same correction direction and rough size as
+abstraction** (methyl+methane: PBE 8.2 → PBE0 10.6 → exp ≈14). The
+PBE-screens/PBE0-confirms protocol transfers to the second operation: both
+operations sit a few kcal below experiment at PBE0, consistently.
+
+**The bug.** At *exactly* d = 2.5 Å the constrained optimization **reproducibly**
+(twice, independent runs) converges to a solution ~28 kcal/mol above its
+neighbours — a higher electronic state PySCF flags "converged," the same
+"converged ≠ correct" trap as the abstraction reference-drift bug, but now a
+spin/symmetry-broken SCF state rather than a stalled optimizer. It stands
+alone: +28 between neighbours of +3.8 and +4.9.
+
+**The guardrail gap it exposed, now closed.** `barrier_well_resolved` checked
+grid *geometry* (interior max, small gaps, ≥3 points) but not energetic
+plausibility — so a spike, being a valid interior maximum, would have passed if
+the grid had bracketed the product. Fixed: a barrier point more than 8 kcal/mol
+above its nearest sampled neighbour (≤0.3 Å away) is flagged as a likely
+mis-converged state, not a saddle. Four guardrails now, each from a real miss:
+compression walls, coarse grids stepping over the saddle, sparse "barrierless"
+verdicts, and now energetic spikes. (This scan's grid also didn't reach the
+product well, so the extractor's reported number was meaningless — and
+well_resolved already returned False for that, correctly.)
+
+Honest status of the number: PBE0 addition barrier ≈5 kcal/mol is a *read off
+the smooth points*, not a clean extractor output — the d=2.5 pathology and the
+un-bracketed grid mean the pipeline itself declined to certify it, which is the
+correct behaviour. A clean automated value needs a grid that brackets the
+product and either avoids or auto-reruns the 2.5 Å state. Filed, not faked.
+
 ## 2026-07-19 — Addition feasibility: first barrier, well-resolved, and PBE's bias transfers
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
