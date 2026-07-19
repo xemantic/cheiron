@@ -365,3 +365,34 @@ def test_fragment_reference_by_parts_crosses_specs(tmp_path):
     assert ledger.fragment_reference_by_parts("t1", "W2", method) == -10.0 + -40.0
     assert ledger.fragment_reference_by_parts("t1", "W-missing", method) is None
     assert ledger.fragment_reference_by_parts("t1", "W2", "other-method") is None
+
+
+def test_methanol_abstracts_carbon_h_not_oxygen_h():
+    """Methanol has both C-H and O-H; the 'carbon' site must select a C-H.
+    Abstracting the O-H instead would be a different (and much harder) reaction."""
+    from cheiron.chemistry.species import pick_abstractable_hydrogen, saturated
+    from cheiron.geometry import bond_graph
+
+    atoms = saturated("CH3OH")
+    graph = bond_graph(atoms)
+    symbols = atoms.get_chemical_symbols()
+    h = pick_abstractable_hydrogen(atoms, "carbon")
+    parent = graph[h][0]
+    assert symbols[parent] == "C"          # a C-H, not the O-H
+    assert symbols[h] == "H"
+
+
+def test_methanol_builds_into_reaction():
+    built = build(_spec("hydroxyl", "methanol"))
+    # product radical is ·CH2OH: lost one C-H, keeps the O-H → 3 H total
+    product = built.product_radical.atoms
+    symbols = product.get_chemical_symbols()
+    assert symbols.count("H") == 3 and symbols.count("O") == 1
+    assert built.product_radical.spin == 1
+
+
+def test_unknown_site_type_rejected():
+    from cheiron.chemistry.species import pick_abstractable_hydrogen, saturated
+
+    with pytest.raises(ValueError):
+        pick_abstractable_hydrogen(saturated("CH4"), "quaternary")

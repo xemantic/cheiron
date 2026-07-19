@@ -56,4 +56,11 @@ WORKPIECES: dict[str, WorkpieceSpec] = {
     # selectivity probe: a selective tool should prefer the tertiary site above;
     # the margin between the two candidates is the site-preference measurement.
     "adamantane-2h": WorkpieceSpec(id="adamantane-2h", saturated_name="adamantane", abstract_site="secondary"),
+    # First non-hydrocarbon workpiece: methanol's α C-H (CH3OH), a C-H adjacent
+    # to oxygen. The 'carbon' site type is required to abstract the C-H rather
+    # than the much stronger O-H. Purpose: extend beyond alkanes toward the
+    # heteroatom-bearing surfaces real assembly meets, and set up the
+    # polar-tool-on-polar-substrate kinetic question (does hydroxyl's O-family
+    # barrier advantage survive when the workpiece is also polar?).
+    "methanol": WorkpieceSpec(id="methanol", saturated_name="CH3OH", abstract_site="carbon"),
 }

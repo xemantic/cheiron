@@ -130,17 +130,31 @@ def remove_hydrogen(atoms: Atoms, hydrogen_index: int) -> Atoms:
 def pick_abstractable_hydrogen(atoms: Atoms, site: str) -> int:
     """Index of a hydrogen matching a requested site type.
 
-    ``site`` is one of 'primary', 'secondary', 'tertiary', or 'any'. For a site
-    type we return a hydrogen whose parent carbon has the matching substitution
-    (tertiary = parent carbon bonded to three other carbons). Raises if none.
+    ``site`` is one of 'primary', 'secondary', 'tertiary', 'carbon', or 'any'.
+    'primary'/'secondary'/'tertiary' select a hydrogen whose parent carbon has
+    the matching number of carbon neighbours. 'carbon' selects any C-H
+    regardless of substitution — needed for heteroatom molecules whose reactive
+    C-H sits on a carbon with no carbon neighbours (e.g. methanol's α C-H,
+    which must be told apart from the O-H). 'any' takes the first hydrogen and
+    is correct only for molecules where every H is equivalent (e.g. the
+    symmetric radical tools). Raises if no match.
     """
     graph = bond_graph(atoms)
-    wanted = {"primary": 1, "secondary": 2, "tertiary": 3}.get(site)
+    symbols = atoms.get_chemical_symbols()
     candidates = hydrogen_indices(atoms)
-    if wanted is None:  # 'any'
+    if site == "any":
         if not candidates:
             raise ValueError("molecule has no hydrogen to abstract")
         return candidates[0]
+    if site == "carbon":
+        for h in candidates:
+            parent = graph[h][0] if graph[h] else None
+            if parent is not None and symbols[parent] == "C":
+                return h
+        raise ValueError("no C-H hydrogen found in molecule")
+    wanted = {"primary": 1, "secondary": 2, "tertiary": 3}.get(site)
+    if wanted is None:
+        raise ValueError(f"unknown site type {site!r}")
     for h in candidates:
         if carbon_substitution(atoms, h, graph) == wanted:
             return h
