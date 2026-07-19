@@ -10,6 +10,34 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Correction: I overstated it. The polar-substrate effect is modest (~1 kcal/mol), not dramatic
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The previous entry's ≈1.3 kcal/mol methyl+methanol barrier was a coarse-grid
+artifact — exactly the caveat I flagged there, now realized. The 5-point grid
+jumped 2.0 → 1.6 Å and **stepped over the saddle**. A fine grid
+(2.4/2.2/2.0/1.8/1.6) resolves it: −0.49 → +0.12 → +1.26 → **+3.16 @1.8 Å**
+→ −5.76 (transfer). The barrier is **≈3.2 kcal/mol**, cleanly bracketed
+(rising to the peak at 1.8, falling to the product well at 1.6).
+
+Revised conclusion: against the methyl-family PBE BEP prediction of ~4.1
+kcal/mol at ΔE −7.9, the polar substrate lowers the barrier by only about
+**1 kcal/mol — modest, not the "roughly a third" I claimed**. The direction
+still holds (polar C-H is somewhat easier than a nonpolar C-H at matched
+driving force), but the magnitude I reported yesterday was wrong, and the
+"heteroatom sites are kinetically *cheap*" framing was too strong. Corrected
+to: heteroatom-adjacent C-H is *modestly* easier, mostly a small effect on top
+of its favorable thermodynamics.
+
+Two lessons banked: (1) grid density is not a detail — a barrier from a grid
+that doesn't bracket the saddle is a lower bound, and I should run the fine
+grid *before* drawing the conclusion, not after; (2) the barrier_kcal fix from
+the same session did its job here (the fine grid's own +3.16 peak is a real
+bracketed saddle, not a compression wall), so the extractor and the grid are
+now both honest. Leaving yesterday's overstatement in the log, struck through
+by this entry — that is the point of the log.
+
 ## 2026-07-19 — Separating experiment: a polar substrate lowers the barrier even for a nonpolar tool
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
