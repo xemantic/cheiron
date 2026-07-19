@@ -33,6 +33,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="cheiron M4 — radical addition")
     parser.add_argument("--tool", required=True, choices=sorted(TOOLS))
     parser.add_argument("--substrate", default="C2H4", help="alkene (ASE G2 name)")
+    parser.add_argument("--attack", default="anti-markovnikov",
+                        choices=["anti-markovnikov", "markovnikov"],
+                        help="regiochemistry: which alkene carbon the tool attacks")
     parser.add_argument("--functional", default="PBE")
     parser.add_argument("--basis", default="def2-SVP")
     parser.add_argument("--max-memory", type=int, default=2000)
@@ -43,7 +46,8 @@ def main() -> int:
                         default=[2.7, 2.5, 2.3, 2.1, 1.9])
     args = parser.parse_args()
 
-    spec_id = f"add-{args.tool}-{args.substrate}"
+    regio = "" if args.attack == "anti-markovnikov" else "-mark"
+    spec_id = f"add-{args.tool}-{args.substrate}{regio}"
     config = ArbiterConfig(
         functional=args.functional, basis=args.basis, max_memory_mb=args.max_memory
     )
@@ -58,11 +62,12 @@ def main() -> int:
         "operation": "radical_addition",
         "tool": args.tool,
         "substrate": args.substrate,
+        "attack": args.attack,
         "method": config.method_string(),
         "created_unix": int(time.time()),
     }
     try:
-        built = build_addition(TOOLS[args.tool], args.substrate, spec_id)
+        built = build_addition(TOOLS[args.tool], args.substrate, spec_id, args.attack)
     except AdditionBuildError as exc:
         record.update(ok=False, error=f"build failed: {exc}")
         _append(args.ledger, record)

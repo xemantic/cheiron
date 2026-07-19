@@ -120,3 +120,41 @@ def test_addition_approach_rejects_bad_distance():
 
     with pytest.raises(AdditionBuildError):
         build_addition_approach(TOOLS["methyl"], "C2H4", 0.0)
+
+
+def test_markovnikov_attacks_internal_carbon_of_propene():
+    """The 'markovnikov' option targets the internal (fewer-H) alkene carbon,
+    the opposite of the default anti-Markovnikov terminal attack."""
+    from cheiron.addition import build_addition
+    from cheiron.chemistry.species import saturated
+
+    sub = saturated("C3H6_Cs")
+    sub_graph = bond_graph(sub)
+    sub_syms = sub.get_chemical_symbols()
+    positions = sub.get_positions()
+    carbons = [i for i, s in enumerate(sub_syms) if s == "C"]
+    pairs = [(np.linalg.norm(positions[a] - positions[b]), a, b)
+             for i, a in enumerate(carbons) for b in carbons[i + 1:]]
+    _, ca, cb = min(pairs)
+    n_h = lambda c: sum(1 for k in sub_graph[c] if sub_syms[k] == "H")
+    internal = ca if n_h(ca) < n_h(cb) else cb
+
+    n_sub = len(sub)
+    built = build_addition(TOOLS["methyl"], "C3H6_Cs", "x", attack="markovnikov")
+    adduct = built.adduct_radical.atoms
+    graph = bond_graph(adduct)
+    symbols = adduct.get_chemical_symbols()
+    tool_carbons = [i for i in range(n_sub, len(adduct)) if symbols[i] == "C"]
+    pos = adduct.get_positions()
+    center = min(tool_carbons, key=lambda i: np.linalg.norm(pos[i] - pos[internal]))
+    # tool center is closest to the internal carbon (Markovnikov attack)
+    others = [c for c in range(n_sub) if symbols[c] == "C" and c != internal]
+    assert all(np.linalg.norm(pos[center] - pos[internal])
+               <= np.linalg.norm(pos[center] - pos[o]) for o in others)
+
+
+def test_addition_rejects_unknown_regiochemistry():
+    from cheiron.addition import AdditionBuildError, build_addition
+
+    with pytest.raises(AdditionBuildError):
+        build_addition(TOOLS["methyl"], "C3H6_Cs", "x", attack="sideways")

@@ -92,9 +92,17 @@ def _alkene_face_normal(atoms: Atoms, carbon: int, graph: dict[int, list[int]]) 
     return normal / n
 
 
-def _place_tool_over_alkene(tool: ToolSpec, substrate_name: str, distance: float):
-    """Shared placement: put the tool radical's center ``distance`` Å above the
-    anti-Markovnikov (terminal) alkene carbon along its π-face normal.
+def _place_tool_over_alkene(
+    tool: ToolSpec, substrate_name: str, distance: float, attack: str = "anti-markovnikov"
+):
+    """Shared placement: put the tool radical's center ``distance`` Å above one
+    alkene carbon's π-face normal.
+
+    ``attack`` selects regiochemistry: 'anti-markovnikov' (default) hits the
+    *terminal* (more-H) carbon, leaving the radical on the more-substituted,
+    more-stabilized carbon — the strongly-preferred radical pathway;
+    'markovnikov' hits the internal (fewer-H) carbon. Ties (ethylene) are
+    symmetric, so the choice is a no-op there.
 
     Returns (tool_radical, substrate, combined, c_attack, tool_center_combined)
     where indices refer to the combined system (substrate atoms first).
@@ -118,7 +126,14 @@ def _place_tool_over_alkene(tool: ToolSpec, substrate_name: str, distance: float
     symbols = substrate.get_chemical_symbols()
     def n_h(c: int) -> int:
         return sum(1 for k in sub_graph[c] if symbols[k] == "H")
-    c_attack = c_a if n_h(c_a) >= n_h(c_b) else c_b
+    terminal = c_a if n_h(c_a) >= n_h(c_b) else c_b
+    internal = c_b if terminal == c_a else c_a
+    if attack == "anti-markovnikov":
+        c_attack = terminal
+    elif attack == "markovnikov":
+        c_attack = internal
+    else:
+        raise AdditionBuildError(f"unknown attack regiochemistry {attack!r}")
     normal = _alkene_face_normal(substrate, c_attack, sub_graph)
 
     tool_moved = tool_radical.copy()
@@ -170,16 +185,19 @@ def build_addition_approach(
     )
 
 
-def build_addition(tool: ToolSpec, substrate_name: str, spec_id: str) -> BuiltAddition:
+def build_addition(
+    tool: ToolSpec, substrate_name: str, spec_id: str, attack: str = "anti-markovnikov"
+) -> BuiltAddition:
     """Build ``Tool· + alkene -> Tool-CH2-CH2·`` as three species.
 
     The tool radical is placed with its radical-center carbon ``CC_ADD_BOND``
     above one alkene carbon's π face (perpendicular attack), giving the
     optimizer a sane starting adduct — it will pyramidalize the attacked carbon
-    and localize the radical on the other one.
+    and localize the radical on the other one. ``attack`` selects the
+    regiochemistry (see ``_place_tool_over_alkene``).
     """
     tool_radical, substrate, adduct, _c_attack, _tc = _place_tool_over_alkene(
-        tool, substrate_name, CC_ADD_BOND
+        tool, substrate_name, CC_ADD_BOND, attack
     )
 
     for label, atoms in (
