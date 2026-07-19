@@ -10,6 +10,40 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Polar-polar barrier: the leash scan breaks, but a real H-bonded pre-complex appears
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Attempted the hydroxyl-on-methanol barrier (PBE0, one-leash relaxed scan) to
+ask whether a polar substrate compounds oxygen's kinetic advantage. The raw
+profile came back non-physical — −9.0 @2.4 Å, **+12.4 @2.0**, −3.2 @1.6,
+−7.2 @1.3 — so I did **not** trust the +12.4 as a barrier, and the geometry
+audit (kept for exactly this) explained why:
+
+- The target C-H is correctly addressed (tool O approaches H2; C-H stretches
+  to 1.33 Å at 2.0, i.e. mid-transfer), so it is not the off-target failure.
+- But each constrained point relaxes into a *different* hydrogen-bonding
+  conformer: the tool-O···methanol-O distance wanders 2.71 → 2.88 → 2.74 →
+  3.29 Å and the C-H length oscillates (1.10 → 1.33 → 1.13 → 1.27). Two
+  rotatable OH groups give the leash coordinate several nearby minima, so
+  consecutive points sit on different surfaces and the profile is jagged.
+
+**Methodological result (the second time the one-leash scan has failed, now
+for a new reason):** it breaks not only on crowded rigid sites (tool slides
+off — adamantane) but on *flexible polar* substrates (each point finds a
+different H-bond conformer). Both failure modes have the same fix — the
+clamped-bodies scan, which pins orientation and conformation — and both were
+caught by geometry auditing, not by the energy looking wrong. Clamped
+hydroxyl+methanol is queued.
+
+**Real signal salvaged:** the 2.4 Å point is a genuine **hydrogen-bonded
+pre-reactive complex** — tool O-H···O(methanol) at 2.71 Å, **~9 kcal/mol
+below the separated fragments**. Polar tool meeting polar substrate forms a
+directional pre-complex before any C-H chemistry; on a real hydroxylated
+surface that is a steering interaction a positioning machine could exploit or
+must fight. That much is defensible from this run; the abstraction barrier
+itself waits on the clamped scan.
+
 ## 2026-07-19 — First heteroatom workpiece: methanol, and a textbook radical stabilization recovered
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
