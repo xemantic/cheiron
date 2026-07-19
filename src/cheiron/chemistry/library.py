@@ -71,4 +71,10 @@ WORKPIECES: dict[str, WorkpieceSpec] = {
     # polar-tool-on-polar-substrate kinetic question (does hydroxyl's O-family
     # barrier advantage survive when the workpiece is also polar?).
     "methanol": WorkpieceSpec(id="methanol", saturated_name="CH3OH", abstract_site="carbon"),
+    # Silane (SiH4): a second-row H-donor workpiece. Its Si-H bond (~92 kcal/mol)
+    # is much weaker than any C-H, so abstraction *from* silane should be
+    # strongly favorable — the mirror image of silyl-as-tool being a poor
+    # abstractor. Both follow from the one weak Si-H bond; the loop should show
+    # the symmetry. Site 'any' (the four Si-H are equivalent).
+    "silane": WorkpieceSpec(id="silane", saturated_name="SiH4", abstract_site="any"),
 }

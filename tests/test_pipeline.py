@@ -416,3 +416,13 @@ def test_silyl_addition_builds():
     syms = adduct.get_chemical_symbols()
     assert syms.count("Si") == 1                # Si-C adduct radical
     assert built.adduct_radical.spin == 1
+
+
+def test_silane_workpiece_builds():
+    """Silane (SiH4) as an H-donor workpiece: product radical is ·SiH3."""
+    built = build(_spec("ethynyl", "silane"))
+    assert built.workpiece.spin == 0            # SiH4 closed shell
+    prod = built.product_radical.atoms
+    syms = prod.get_chemical_symbols()
+    assert syms.count("Si") == 1 and syms.count("H") == 3
+    assert built.product_radical.spin == 1      # ·SiH3 doublet
