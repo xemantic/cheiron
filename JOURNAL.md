@@ -10,6 +10,36 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Clamped fix works: hydroxyl abstracts methanol's α C-H barrierlessly (audited)
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The clamped-bodies rerun of hydroxyl+methanol (PBE0, 8 atoms, fit even at
+500 MB) replaced yesterday's jagged leash profile with a clean one:
+−2.58 @2.4 Å → −0.84 @2.0 → −1.10 @1.6 → −13.97 @1.3, **barrier 0.0**.
+Geometry audited at the transfer point: the target α C-H is broken (C–H
+1.81 Å), the new tool O–H formed (0.97 Å), and methanol's *own* O–H stayed
+clear (2.93 Å) — so it abstracted the intended C-H, not the easier O-H. That
+is the third method-vs-chemistry check the clamped scan has passed where the
+leash failed; pinning orientation *and* conformation is now the standard tool
+for anything not a small rigid alkane.
+
+**Interpretation, kept honest.** hydroxyl's barrier: methane 1.8 → methanol
+0.0 (PBE0). Tempting to call this polar-tool-meets-polar-substrate synergy —
+but methanol's α C-H is also 7.9 kcal/mol more exothermic, and on any normal
+BEP slope that extra driving force alone lowers the barrier ~3 kcal/mol,
+more than enough to erase 1.8. So the barrierless result is *fully explained
+by the weaker C-H*; it does **not** by itself demonstrate a distinct
+polarity effect. Separating the two would need a case where driving force and
+polarity push in opposite directions (e.g. a nonpolar tool on this polar
+substrate, or a polar tool on a substrate made more exothermic without a
+heteroatom) — a clean experiment to queue, not a conclusion to claim now.
+
+What the methanol pair *does* establish: (1) the loop handles heteroatom
+substrates end to end — build, site-typing, favorability, audited kinetics;
+(2) polar pairs form a real ~9 kcal/mol H-bonded pre-complex (prior entry);
+(3) the abstraction itself is barrierless and site-correct.
+
 ## 2026-07-19 — Polar-polar barrier: the leash scan breaks, but a real H-bonded pre-complex appears
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
