@@ -190,3 +190,39 @@ def test_barrier_excludes_post_transfer_compression():
         scan.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
     # min-energy point is 1.6; only d>=1.6 count -> peak is +1.3, not +28
     assert scan.barrier_kcal() == pytest.approx(1.3, rel=1e-6)
+
+
+def test_barrier_well_resolved_flags_coarse_grid():
+    """The methyl+methanol miss: a coarse grid steps over the saddle. A peak
+    with a >0.3 A gap to a neighbour is not trustworthy."""
+    kcal = 1.0 / 627.509474
+    # coarse: peak +1.26 at 2.0, but 2.0->1.6 is a 0.4 A gap hiding the real saddle
+    coarse = ApproachScan(spec_id="x", method="m", reference_hartree=0.0)
+    for d, e in ((2.4, -0.5), (2.0, 1.26), (1.6, -5.76)):
+        coarse.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
+    assert coarse.barrier_well_resolved() is False
+
+    # fine: peak +3.16 at 1.8 with 0.2 A neighbours on both sides
+    fine = ApproachScan(spec_id="x", method="m", reference_hartree=0.0)
+    for d, e in ((2.4, -0.5), (2.2, 0.12), (2.0, 1.26), (1.8, 3.16), (1.6, -5.76)):
+        fine.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
+    assert fine.barrier_well_resolved() is True
+
+
+def test_barrier_well_resolved_none_when_downhill():
+    scan = ApproachScan(spec_id="x", method="m", reference_hartree=0.0)
+    kcal = 1.0 / 627.509474
+    for d, e in ((2.4, -0.5), (2.0, -2.0), (1.6, -8.0)):
+        scan.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
+    assert scan.barrier_kcal() == 0.0
+    assert scan.barrier_well_resolved() is None
+
+
+def test_barrier_well_resolved_false_when_peak_at_endpoint():
+    """Monotonically rising (no product well sampled): peak is the nearest
+    point, so the saddle is not bracketed."""
+    scan = ApproachScan(spec_id="x", method="m", reference_hartree=0.0)
+    kcal = 1.0 / 627.509474
+    for d, e in ((2.4, 0.5), (2.2, 2.0), (2.0, 4.0)):
+        scan.points.append(ScanPoint(d, e * kcal, True, False, 0.0))
+    assert scan.barrier_well_resolved() is False

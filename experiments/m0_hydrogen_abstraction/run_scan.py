@@ -111,6 +111,9 @@ def main() -> int:
     for d, e in sorted(scan.relative_kcal(), reverse=True):
         print(f"  d={d:4.2f} A   E-Einf = {e:+8.2f} kcal/mol")
     print(f"{mode} barrier estimate: {scan.barrier_kcal():.2f} kcal/mol  ({scan.wall_seconds:.0f}s)")
+    if scan.barrier_well_resolved() is False:
+        print("  WARNING: barrier not well-resolved — peak at a grid endpoint or "
+              "gap >0.3 A. Re-run with a finer grid across the saddle before trusting it.")
     return 0
 
 

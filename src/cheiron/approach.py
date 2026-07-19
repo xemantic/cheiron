@@ -183,6 +183,32 @@ class ApproachScan:
         approach = [e for d, e in rel if d >= min_distance]
         return max(0.0, max(approach))
 
+    def barrier_well_resolved(self, max_gap: float = 0.3) -> bool | None:
+        """Is the reported barrier trustworthy, or a grid artifact?
+
+        Returns True only when the barrier peak is a genuine *interior* maximum
+        of the approach profile — a lower point on both sides — AND the distance
+        gaps to both neighbours are ≤ ``max_gap`` Å, so a higher saddle can't be
+        hiding in an unsampled gap. A coarse grid that steps over the saddle
+        (e.g. 2.0 → 1.6 Å around a peak at ~1.8) returns False; that is exactly
+        the miss that turned a 3.2 kcal/mol barrier into a spurious 1.3 once
+        (2026-07-19). None when the profile is downhill (barrier 0, nothing to
+        resolve) or has too few points.
+        """
+        rel = self.relative_kcal()
+        if not rel:
+            return None
+        min_distance = min(rel, key=lambda t: t[1])[0]
+        approach = sorted((d, e) for d, e in rel if d >= min_distance)  # near→far
+        if self.barrier_kcal() == 0.0:
+            return None  # downhill: no saddle to resolve
+        peak_i = max(range(len(approach)), key=lambda i: approach[i][1])
+        if peak_i == 0 or peak_i == len(approach) - 1:
+            return False  # peak at an endpoint: saddle not bracketed
+        left_gap = approach[peak_i][0] - approach[peak_i - 1][0]
+        right_gap = approach[peak_i + 1][0] - approach[peak_i][0]
+        return left_gap <= max_gap and right_gap <= max_gap
+
     def to_dict(self) -> dict:
         return {
             "spec_id": self.spec_id,
@@ -191,6 +217,7 @@ class ApproachScan:
             "reference_hartree": self.reference_hartree,
             "reference_source": self.reference_source,
             "barrier_kcal": self.barrier_kcal(),
+            "barrier_well_resolved": self.barrier_well_resolved(),
             "ok": self.ok,
             "error": self.error,
             "wall_seconds": round(self.wall_seconds, 2),
