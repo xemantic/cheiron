@@ -396,3 +396,23 @@ def test_unknown_site_type_rejected():
 
     with pytest.raises(ValueError):
         pick_abstractable_hydrogen(saturated("CH4"), "quaternary")
+
+
+def test_silyl_tool_builds_second_row():
+    """Silyl (·SiH3, second-row Si) must build with correct doublet spin —
+    the pipeline should handle heavier elements, not just C/N/O."""
+    built = build(_spec("silyl", "methane"))
+    assert built.tool_saturated.spin == 0     # SiH4, closed shell
+    assert built.tool_radical.spin == 1       # ·SiH3, doublet
+    syms = built.tool_radical.atoms.get_chemical_symbols()
+    assert syms.count("Si") == 1 and syms.count("H") == 3
+
+
+def test_silyl_addition_builds():
+    from cheiron.addition import build_addition
+    built = build_addition(TOOLS["silyl"], "C2H4", "add-silyl-C2H4")
+    assert built.tool_radical.spin == 1
+    adduct = built.adduct_radical.atoms
+    syms = adduct.get_chemical_symbols()
+    assert syms.count("Si") == 1                # Si-C adduct radical
+    assert built.adduct_radical.spin == 1

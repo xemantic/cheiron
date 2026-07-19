@@ -35,6 +35,14 @@ TOOLS: dict[str, ToolSpec] = {
     "ethynyl-ada": ToolSpec(
         id="ethynyl-ada", saturated_name="ethynyl-adamantane", donor_site="primary"
     ),
+    # Silyl radical ·SiH3 (saturated form silane, SiH4). The loop's first
+    # second-row (silicon) tool — directly relevant to proposed Si-based
+    # mechanosynthesis tooltips, and a test of pipeline generality to heavier
+    # elements. Prediction: a *poor* abstractor (Si-H ~92 kcal/mol is weaker
+    # than C-H ~105, so abstraction from a hydrocarbon should be endothermic)
+    # but a competent adder (strong Si-C bond) — a fresh operation-dependent
+    # ranking case with a heavier element.
+    "silyl": ToolSpec(id="silyl", saturated_name="SiH4", donor_site="any"),
 }
 
 # Hydrogenated workpieces, cheap -> realistic (the M0 "workpiece ladder").
