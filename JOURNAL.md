@@ -10,6 +10,45 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Butadiene: allylic stabilization recovered (−11.5), and additivity survives even that — the break stays unfound
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Aimed the residual hunt at the classic coupling case: 1,3-butadiene, whose
+anti-Markovnikov adduct is an **allylic (resonance-stabilized) radical**. If
+additivity breaks anywhere, here.
+
+Two findings, and a blocker.
+
+1. **Allylic stabilization recovered.** methyl+butadiene = −43.7 (vs
+   methyl+ethylene −32.1) → a butadiene substrate offset of **−11.5 kcal/mol**,
+   thirty times propene's −0.4. That −11.5 is textbook allyl resonance
+   (~12–15 kcal/mol) — the loop pulled it out of the reaction energy unaided.
+   ethynyl+butadiene = −77.4 (the most favourable addition in the ledger).
+
+2. **Additivity holds anyway, to 0.1 kcal/mol.** The butadiene offset is
+   tool-independent: methyl −11.5, ethynyl −11.4, difference **+0.1**. Even a
+   huge, special substrate term is cleanly separable — the allylic
+   stabilization lives on the substrate-derived allyl fragment, insulated from
+   the tool by the new σ bond. I predicted a break here and the data refused:
+   the "tool-term + substrate-term" model is more robust than I gave it credit
+   for.
+
+3. **The one case that might still break it is builder-blocked.**
+   vinyl+butadiene — a *conjugated tool* on a *conjugated substrate*, where the
+   unpaired electron could delocalize across **both** π systems through the
+   forming bond — **failed to build**: a steric clash in the naive
+   perpendicular starting geometry (planar vinyl doesn't fit before
+   optimization). Recorded as a build failure in the ledger. That is the
+   crucial experiment, still open.
+
+Honest status: additivity in addition is empirically robust through large
+substrate-localized effects (butadiene proves it survives allylic
+stabilization). Its true limit — if it has one — needs the radical delocalized
+across the *new bond* into the tool, which is exactly the vinyl+butadiene case
+the builder can't yet place. Next: fix the adduct starting-geometry clash (the
+optimizer relaxes it anyway) so that definitive test can run.
+
 ## 2026-07-19 — Went hunting for a residual; the addition model held to 0.01 kcal/mol
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
