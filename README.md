@@ -51,10 +51,20 @@ produced unattended by the loop and pushed as they happened:
 - **Handle-mounted tools work**: an ethynyl tip on an adamantyl frame costs
   only 0.8 kcal/mol of driving force vs the free radical — cheap surrogate
   screening is predictive of realistic tooltips.
+- **A second operation (M4): radical addition.** The loop is not hardwired to
+  hydrogen abstraction — it now also does a *bond-forming* step (a radical
+  adding across a C=C), characterized to the same depth: favorability
+  (validated vs known ΔE), approximate additivity, a **certified** PBE0 barrier
+  (methyl+ethylene 3.84 kcal/mol), and anti-Markovnikov regioselectivity
+  (3.8 kcal/mol). Two findings only two operations could give: **tool ranking is
+  operation-dependent** (abstraction strength doesn't predict addition
+  strength), and **abstraction needs the machine to pick the site while
+  addition has real intrinsic regiochemistry** to lean on.
 
 The narrative, including every failure and correction, lives in
 [`JOURNAL.md`](JOURNAL.md); raw append-only records in
-`experiments/m0_hydrogen_abstraction/results/` (`ledger.jsonl`, `scans.jsonl`).
+`experiments/m0_hydrogen_abstraction/results/` (abstraction) and
+`experiments/m1_radical_addition/results/` (addition).
 
 ## Running it
 
@@ -69,6 +79,9 @@ curl -sS https://bootstrap.pypa.io/get-pip.py | .venv/bin/python
 
 # the M0 result run
 .venv/bin/python experiments/m0_hydrogen_abstraction/run.py --workpieces isobutane
+
+# a second-operation run: radical addition (M4)
+.venv/bin/python experiments/m1_radical_addition/run_addition.py --tool ethynyl --substrate C2H4
 
 # tests (no quantum chemistry needed)
 .venv/bin/pytest
