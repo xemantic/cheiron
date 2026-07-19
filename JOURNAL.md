@@ -10,6 +10,33 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — First heteroatom workpiece: methanol, and a textbook radical stabilization recovered
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The library steps outside hydrocarbons for the first time. Methanol (CH3OH)
+joins as a workpiece, abstracting its **α C-H** — which required a new
+`carbon` site type to tell the reactive C-H apart from the much stronger O-H
+(getting that wrong would silently measure a different reaction). Three
+anchors (UKS/PBE/def2-SVP): ethynyl −34.1, hydroxyl −18.1, methyl −7.9.
+
+The additive model (now 45 records) absorbs it with **worst residual 0.0001
+kcal/mol** and a methanol workpiece term of **−7.90 relative to methane** —
+identical offset from all three tools, as Hess's law requires. But the number
+itself is real chemistry the loop was not told: the α C-H of methanol is
+7.9 kcal/mol easier to abstract than methane's, because the resulting
+·CH2OH radical is stabilized by the adjacent oxygen lone pair. That is the
+textbook α-heteroatom radical stabilization (~8 kcal/mol), recovered from
+three independent measurements — the same kind of known-regularity check that
+has validated the pipeline throughout, now on a polar substrate.
+
+The genuinely open question methanol sets up is **kinetic, not thermodynamic**:
+oxygen *tools* undercut the barrier–ΔE line (an electronegative-TS effect);
+does a polar *substrate* do likewise, and do the two compound when a polar
+tool meets a polar C-H? hydroxyl+methanol is a small system that fits memory —
+its relaxed barrier scan is the next step, and unlike ΔE, no identity
+guarantees the answer.
+
 ## 2026-07-19 — Handle-steric question answered: the adamantyl frame pays ~zero toll; my earlier hint was wrong
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
