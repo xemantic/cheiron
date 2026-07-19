@@ -10,6 +10,34 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Made the reversibility check permanent: an automated physics guard on the ledger
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Turned yesterday's happy accident — the ±19.7 reversibility pair — into a
+standing automated check, the same way each barrier near-miss became a
+guardrail. `cheiron.validate.check_reversibility` scans the ledger for
+candidate pairs whose tool/workpiece *saturated molecules are swapped* (the
+same abstraction run backwards, so ΔE_forward + ΔE_reverse must be ~0) and for
+self-reverse pairs (A-from-A, which must be ~0), and reports the residual.
+`scripts/check_reversibility.py` runs it with a nonzero exit on failure — a
+free, rigorous CI check that the arbiter's *independent* per-candidate
+calculations respect microscopic reversibility.
+
+On the current ledger it passes exactly:
+
+    OK  habs-methyl-methane (+0.0) + habs-methyl-methane (+0.0) = +0.00  [self-reverse]
+    OK  habs-silyl-methane (+19.7) + habs-methyl-silane (-19.7) = -0.00  [sum must be ~0]
+
+Why this matters: the two bugs this session that reached real numbers — the
+geometry-opt reference drift and the SCF-state spike — both violated a physics
+invariant the eye had to catch. A convergence failure that shifted one
+candidate's ΔE would now break its reversibility pair and be caught
+mechanically, for free, every time the check runs. Three built-in physics
+identities are now *enforced*, not just observed: reversibility, the
+thermoneutral identity, and cross-tool additivity. The loop increasingly
+audits its own physics.
+
 ## 2026-07-19 — The silicon symmetry closes — and the loop passes an exact reversibility check (+19.7 / −19.7)
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
