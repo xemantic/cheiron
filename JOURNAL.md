@@ -10,6 +10,46 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — Operation-dependent tool ranking: abstraction strength does not predict addition strength
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+Completed the addition tool ladder on ethylene and set it beside the
+abstraction ladder (both UKS/PBE/def2-SVP, ΔE in kcal/mol):
+
+| tool | abstraction (vs CH4) | addition (vs C2H4) |
+|------|---------------------:|-------------------:|
+| ethynyl | −26.2 | −66.1 |
+| vinyl | −3.1 | −42.5 |
+| hydroxyl | −10.2 | −39.8 |
+| methyl | 0.0 | −32.1 |
+| amino | −1.2 | −31.1 |
+
+**The two rankings are not the same.** Spearman ρ ≈ 0.8 — positively
+correlated (ethynyl dominates both, amino is weak in both), but the middle and
+bottom reshuffle materially:
+
+- **methyl** is the loop's *worst* abstractor (thermoneutral on methane) yet a
+  perfectly good adder (−32, ahead of amino). A methyl radical forms a weak
+  new C–H on abstraction but a strong new C–C on addition — different bonds,
+  different verdict.
+- **hydroxyl and vinyl swap**: hydroxyl out-abstracts vinyl by 7 kcal/mol
+  (strong O–H) but under-adds it (−39.8 vs −42.5), because the C–O bond it
+  forms on addition is weaker than vinyl's new C–C.
+
+This is exactly the kind of result the loop exists to surface, and — unlike
+the abstraction additivity, which Hess's law guarantees — **nothing forced it**:
+addition ΔE = π-bond-broken − new-σ-bond-formed depends on the tool's bond to
+*carbon*, a different quantity from the tool's X–H strength that governs
+abstraction. A tool has no single scalar "reactivity"; its suitability is
+operation-specific.
+
+Direct consequence for SELECT (and for any real toolkit): **rank tools per
+operation, never by a generic reactivity.** The abstraction leaderboard is not
+the addition leaderboard. That is a concrete design rule the loop produced by
+doing two operations rather than one — the payoff of M4 beyond merely "it also
+works."
+
 ## 2026-07-19 — A second operation: radical addition works and validates against known chemistry
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
