@@ -19,6 +19,7 @@ test-backed pieces (next: an addition runner that scores ΔE).
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 
 import numpy as np
@@ -195,3 +196,60 @@ def build_addition(tool: ToolSpec, substrate_name: str, spec_id: str) -> BuiltAd
         substrate=Species("substrate", substrate, unpaired_electrons(substrate)),
         adduct_radical=Species("adduct_radical", adduct, unpaired_electrons(adduct)),
     )
+
+
+def addition_barrier_scan(tool, substrate_name, distances, config):
+    """Relaxed approach-barrier scan of the bond-forming coordinate.
+
+    Freezes d(alkene_carbon ... tool_center) at each distance and relaxes the
+    rest, referenced to the separately-optimized fragments
+    (E(Tool·) + E(alkene)). Returns an ``approach.ApproachScan`` so the shared,
+    guardrailed barrier extraction (approach-only max; resolution check) applies
+    unchanged. ``distances`` should bracket the C–C bond region (~2.6 → 1.9 Å).
+    """
+    # local imports: reuse the abstraction module's optimizer and scan container
+    from .approach import ApproachScan, ScanPoint, _constrained_optimize
+    from .arbiter import evaluate_species
+
+    scan = ApproachScan(
+        spec_id=f"add-{tool.id}-{substrate_name}",
+        method=config.method_string() + " [addition approach]",
+        kind="addition_approach_scan",
+    )
+
+    # Reference: independently optimized tool radical + substrate.
+    tr, sub, _combined, _ca, _tc = _place_tool_over_alkene(tool, substrate_name, 3.0)
+    refs = {}
+    for role, atoms in (("tool_radical", tr), ("substrate", sub)):
+        result = evaluate_species(
+            Species(role, atoms, unpaired_electrons(atoms)), config
+        )
+        if result.energy_hartree is None or not result.converged:
+            scan.error = f"reference failed for {role}: {result.error or 'not converged'}"
+            return scan
+        refs[role] = result.energy_hartree
+    scan.reference_hartree = refs["tool_radical"] + refs["substrate"]
+    scan.reference_source = "recomputed"
+
+    start = time.time()
+    for d in sorted(distances, reverse=True):  # far -> near
+        t0 = time.time()
+        try:
+            appr = build_addition_approach(tool, substrate_name, d)
+        except AdditionBuildError as exc:
+            scan.points.append(ScanPoint(d, None, False, False, time.time() - t0, str(exc)))
+            continue
+        energy, converged, error, xyz = _constrained_optimize(
+            appr.atoms, appr.spin, (appr.alkene_carbon, appr.tool_center), config
+        )
+        scan.points.append(
+            ScanPoint(d, energy, converged, has_clash(appr.atoms),
+                      time.time() - t0, error, xyz)
+        )
+
+    usable = [p for p in scan.points if p.energy_hartree is not None and p.converged]
+    scan.ok = bool(usable)
+    if not scan.ok and scan.error is None:
+        scan.error = "no scan point produced a converged energy"
+    scan.wall_seconds = time.time() - start
+    return scan

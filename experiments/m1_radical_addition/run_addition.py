@@ -37,6 +37,10 @@ def main() -> int:
     parser.add_argument("--basis", default="def2-SVP")
     parser.add_argument("--max-memory", type=int, default=2000)
     parser.add_argument("--ledger", type=Path, default=RESULTS / "ledger.jsonl")
+    parser.add_argument("--barrier", action="store_true",
+                        help="run an approach-barrier scan instead of the reaction energy")
+    parser.add_argument("--distances", type=float, nargs="+",
+                        default=[2.7, 2.5, 2.3, 2.1, 1.9])
     args = parser.parse_args()
 
     spec_id = f"add-{args.tool}-{args.substrate}"
@@ -45,6 +49,9 @@ def main() -> int:
     )
     print(f"cheiron M4 — radical addition  {spec_id}")
     print(f"method: {config.method_string()}")
+
+    if args.barrier:
+        return _run_barrier(args, config, spec_id)
 
     record: dict = {
         "spec_id": spec_id,
@@ -99,6 +106,28 @@ def main() -> int:
     print(f"       dE = {de_kcal:+.1f} kcal/mol  -> "
           f"{'FAVORABLE' if de_kcal < 0 else 'unfavorable'}  "
           f"({record['wall_seconds']:.0f}s, {config.method_string()})")
+    return 0
+
+
+def _run_barrier(args, config, spec_id: str) -> int:
+    from cheiron.addition import addition_barrier_scan
+
+    scans = RESULTS / "scans.jsonl"
+    print(f"distances (A): {sorted(args.distances, reverse=True)}")
+    scan = addition_barrier_scan(TOOLS[args.tool], args.substrate, args.distances, config)
+    record = scan.to_dict()
+    record["created_unix"] = int(time.time())
+    _append(scans, record)
+    print(f"appended scan record -> {scans}")
+    if not scan.ok:
+        print(f"SCAN FAILED: {scan.error}")
+        return 1
+    for d, e in sorted(scan.relative_kcal(), reverse=True):
+        print(f"  d={d:4.2f} A   E-Einf = {e:+8.2f} kcal/mol")
+    print(f"barrier estimate: {scan.barrier_kcal():.2f} kcal/mol  "
+          f"(well-resolved: {scan.barrier_well_resolved()}; {scan.wall_seconds:.0f}s)")
+    if scan.barrier_well_resolved() is False:
+        print("  WARNING: barrier not well-resolved — refine the grid across the saddle.")
     return 0
 
 
