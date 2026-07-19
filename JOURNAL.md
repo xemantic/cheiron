@@ -10,6 +10,29 @@ file is the narrative that ties them together.
 
 ---
 
+## 2026-07-19 — The 44-atom scan fits after all — and lost a race; first steric hint salvaged
+
+**Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
+
+The overnight window opened (3.9 GB) and the parked handle-steric scan
+launched — and this time it *ran*: first SCF converged (44 atoms,
+E = −855.0920 Ha at the built geometry), first gradient done. Then a
+neighbor JVM daemon spawned mid-run, reclaimed 2.4 GB, and the OOM killer
+took the optimization at step 0. Revised diagnosis: **the calculation fits;
+it needs a ~30–60 min *sustained* window, and the host's neighbors respawn
+faster than that.** Still parked; still racing.
+
+One observation salvaged from the wreck, stated with all its caveats (single
+unrelaxed step-0 energy, never entered the records, not a measurement): at
+d = 2.4 Å the built handle-tool supersystem sits **+4.8 kcal/mol above the
+separated fragments** against the ledger reference — where the *free* tip's
+relaxed entrance at the same site and distance was −4.26. Rigid-vs-relaxed
+accounts for some of that gap, but free-tip rigid entrances ran ≈ −1, not +5.
+Tentative reading: **the adamantyl handle pays a real steric toll at the
+crowded secondary site** — exactly the effect this scan exists to measure.
+The number that can be defended has to come from the completed constrained
+optimization, when the host finally allows it.
+
 ## 2026-07-18 — Hardware boundary measured: 44 atoms needs ~4 GB this host can't give
 
 **Who:** Claude (Fable 5) as harness, inside the continuous `/loop`.
